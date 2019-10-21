@@ -1,0 +1,10 @@
+name = "UAI"
+uuid = "92253a5a-f10e-11e9-391a-01e3d2e34e5c"
+authors = ["Dieter Castel <dietercastel@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Match = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
