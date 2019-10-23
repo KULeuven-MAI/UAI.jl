@@ -54,57 +54,59 @@ function normalize(tensor)
 	end
 end
 
+# Checks the validity of the conditioning dimension.
+function checkCondDim(tensor, cdim)
+	if !(cdim in 1:ndims(tensor))
+			throw(ArgumentError("The conditioning set dimension is invalid for the given tensor"))
+	end
+end
+
 # Returns whether the tensor is normalized w.r.t. the cdim conditioning set dimension.
 # 
 # tensor: a tensor 
 # cdim: the dimension corresponding to the conditioning set. 
-function isCondNorm(tensor; cdim::Int=nothing)
-	if cdim == nothing
-		# Infer the condition set dimension as the last dimension.
-		cdim = ndims(tensor)
-	else
-		if ndims(tensor) < cdim | condSet < 0 
-			throw(ArgumentError("The conditioning set dimension is invalid for the given tensor"))
-		end
-	end
+# Note that \approx (a.k.a. isapprox()) is used due to numerical considerations.
+function isCondNorm(tensor; cdim::Int=ndims(tensor))
+	checkCondDim(tensor, cdim)
 	# Sum over all dimensions except the cdim.
-	sumdims = filter(e-> e ≠ cdim, range(1,length=ndims(tensor)))
+	sumdims = filter(e-> e ≠ cdim, 1:ndims(tensor))
 	s = sum(tensor, dims=sumdims)
-	return all(filter(e->e ≈ 1,s))
+	println(s)
+	return all(map(e->e ≈ 1,s))
 end
 
-#TODO: Write alternative reusing isNorm?
+#TODO: benchmark vs ^^^
+function isCondNorm2(tensor; cdim::Int=ndims(tensor))
+	checkCondDim(tensor, cdim)
+	cdimRange = 1:size(tensor)[cdim]
+	res = [ isNorm(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange]
+	return all(res)
+end
 
-# TODO: debug
-# returns the i-th slice of tensor over dimension k
+
+# Returns the i-th slice of tensor over dimension k
 function sliceOverDim(tensor, i; dim=nothing)
 	if dim == nothing
-			throw(ArgumentError("A dimension to slice over must be set with the keyword 'dim'"))
+		throw(ArgumentError("A dimension to slice over must be set with the keyword 'dim'"))
 	end
-	new = map(s->axes(tensor,s),size(tensor))
-	#TODO
-	return new
-	#return getindex(tensor, new...)
+	if !(i in axes(tensor)[dim])
+		throw(ArgumentError("Can't slice outside of the size of the dimension."))
+	end
+	# Conversion to array to use the setindex! function
+	new = convert(Array{Any},collect(axes(tensor)))
+	new[dim] = i 
+	# convert back to tuple for passing to function
+	newIndex = tuple(new...)
+	return getindex(tensor, newIndex...)
 end
 
 
 # Normalisation for conditional probability distributions
-# TODO: debug & test
-function condNormalize(tensor; cdim::Int=nothing)
-	if cdim == nothing
-		# Infer the condition set dimension as the last dimension.
-		cdim = ndims(tensor)
-	else
-		if ndims(tensor) < cdim | cdim < 0
-			throw(ArgumentError("The conditioning set dimension is invalid for the given tensor"))
-		end 
-	end
-	res = [] 
-	for i in size(tensor)[cdim]
-		for sa in sliceOverDim(tensor, i, dim=cdim)
-			cat(res, normalize(sa), dims=cdim)
-		end
-	end
-	return res
+function condNormalize(tensor; cdim::Int=ndims(tensor))
+	checkCondDim(tensor, cdim)
+	cdimRange = 1:size(tensor)[cdim]
+	println(cdimRange)
+	res = [ normalize(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange ]
+	println(res)
+	return cat(res..., dims=cdim)
 end
-

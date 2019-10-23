@@ -5,7 +5,8 @@ module UAI
 	using Match
 	using Random
 	using Distributions
-	export genRandTot, normRands, normRandsTensor, isStrictPos, isNorm, normalize, condNormalize
+	export genRandTot, normRands, normRandsTensor, isStrictPos, isNorm, normalize, sliceOverDim
+	export isCondNorm, condNormalize
 
 	include("normalization.jl")
 

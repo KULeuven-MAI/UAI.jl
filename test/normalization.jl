@@ -20,10 +20,40 @@ toNormB = cat([ [0.3 0.5]; [0.2 0.3] ], [ [0.2 0.1]; [0.2 0.1] ], dims=3)
 normB = cat([[ 0.158 0.263]; [0.105 0.158] ], [ [ 0.105 0.053 ]; [ 0.105 0.053 ] ], dims=3) 
 # Exc 3.3 a)
 toCondNormC = toNormA
-normC = [ [0.166  0.714  0.5] ; [0.833333  0.286  0.5] ]
+condNormC = [ [0.167  0.714  0.5] ; [0.833 0.286  0.5] ]
 # Exc 3.3 b)
 toCondNormD = toNormB
-toCondNormD = cat([ [ 0.158 0.263]; [0.105 0.158] ], [ [ 0.105 0.053 ]; [ 0.105 0.053 ] ], dims=3) 
+condNormD = cat([ [0.231  0.385]; [0.154  0.231] ], [ [0.333 0.167]; [ 0.333 0.167] ], dims=3)
+
+@testset "Testing the conditional normalization" begin
+	@test_throws ArgumentError condNormalize(toCondNormC, cdim=4)
+	@test_throws ArgumentError condNormalize(toCondNormC, cdim=-1)
+	@test !isCondNorm(strictPos)
+	@test !isCondNorm(notNorm)
+	@test isCondNorm(condNormC, cdim=2)
+	@test isCondNorm(condNormC)
+	# TODO: improve handling of approx atol
+	#= @test isCondNorm(condNormD, cdim=3)  =#
+	#= @test isCondNorm(condNormD)  =#
+	@test isapprox(condNormC, condNormalize(toCondNormC, cdim=2), atol=1e-3) 
+	@test isapprox(condNormC, condNormalize(toCondNormC), atol=1e-3) 
+	@test isapprox(condNormD, condNormalize(toCondNormD, cdim=3), atol=1e-3) 
+	@test isapprox(condNormD, condNormalize(toCondNormD), atol=1e-3) 
+end
+
+@testset "Testing the slicing function" begin
+	@test_throws ArgumentError sliceOverDim(toNormB, 3, dim=1) ≈ toNormB[1,:,:]
+	@test_throws ArgumentError sliceOverDim(toNormB, -1, dim=1) ≈ toNormB[1,:,:]
+	@test sliceOverDim(toNormB, 1, dim=1) ≈ toNormB[1,:,:]
+	@test sliceOverDim(toNormB, 2, dim=1) ≈ toNormB[2,:,:]
+	@test sliceOverDim(toNormB, 1, dim=2) ≈ toNormB[:,1,:]
+	@test sliceOverDim(toNormB, 2, dim=2) ≈ toNormB[:,2,:]
+	@test sliceOverDim(toNormB, 1, dim=3) ≈ toNormB[:,:,1]
+	@test sliceOverDim(toNormB, 2, dim=3) ≈ toNormB[:,:,2]
+	@test sliceOverDim(toCondNormC, 1, dim=2) ≈ toCondNormC[:,1]
+	@test sliceOverDim(toCondNormC, 2, dim=2) ≈ toCondNormC[:,2]
+end
+
 
 @testset "Testing the normalisation of non-normalized tensors" begin
 	@test isNorm(normalize(strictPos))
@@ -35,10 +65,6 @@ toCondNormD = cat([ [ 0.158 0.263]; [0.105 0.158] ], [ [ 0.105 0.053 ]; [ 0.105 
 	@test isapprox(normA, normalize(toNormA), atol=1e-3) 
 	@test isNorm(normalize(toNormB)) 
 	@test isapprox(normB, normalize(toNormB), atol=1e-3) 
-	@test_throws ArgumentError condNormalize(toCondNormC, cdim=4)
-	@test_throws ArgumentError condNormalize(toCondNormC, cdim=-1)
-	#TODO:
-	#@test isapprox(condNormC, condNormalize(toCondNormC, cdim=2), atol=1e-3) 
 end
 
 @testset "Strictly positive check" begin
