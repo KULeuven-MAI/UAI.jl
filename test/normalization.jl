@@ -24,6 +24,20 @@ condNormC = [ [0.167  0.714  0.5] ; [0.833 0.286  0.5] ]
 # Exc 3.3 b)
 toCondNormD = toNormB
 condNormD = cat([ [0.231  0.385]; [0.154  0.231] ], [ [0.333 0.167]; [ 0.333 0.167] ], dims=3)
+margNormA = [ 0.316,0.368,0.316 ]
+margNormB = [ 0.421 0.158; 0.263 0.158 ]
+
+@testset "Testing conditional probablity from Joint" begin
+	@test isapprox(condA, conditional(normA, 1, cset=[2])normA,[2]), atol=1e-3)
+	@test isapprox(condB, conditional(normB, 1, cset=[2])normA,[2]), atol=1e-3)
+end
+
+@testset "Testing marginalisation" begin
+	@test isapprox(margNormA, marginal(normA,[2]), atol=1e-3)
+	@test isapprox(margNormA, marginalize(normA, mdim=1), atol=1e-3)
+	@test isapprox(margNormB, marginal(normB,[1,3]), atol=1e-3)
+	@test isapprox(margNormB, marginalize(normB, mdim=2), atol=1e-3)
+end
 
 @testset "Testing the conditional normalization" begin
 	@test_throws ArgumentError condNormalize(toCondNormC, cdim=4)

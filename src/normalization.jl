@@ -55,7 +55,7 @@ function normalize(tensor)
 end
 
 # Checks the validity of the conditioning dimension.
-function checkCondDim(tensor, cdim)
+function checkDim(tensor, cdim)
 	if !(cdim in 1:ndims(tensor))
 			throw(ArgumentError("The conditioning set dimension is invalid for the given tensor"))
 	end
@@ -67,17 +67,17 @@ end
 # cdim: the dimension corresponding to the conditioning set. 
 # Note that \approx (a.k.a. isapprox()) is used due to numerical considerations.
 function isCondNorm(tensor; cdim::Int=ndims(tensor))
-	checkCondDim(tensor, cdim)
+	checkDim(tensor, cdim)
 	# Sum over all dimensions except the cdim.
 	sumdims = filter(e-> e ≠ cdim, 1:ndims(tensor))
 	s = sum(tensor, dims=sumdims)
-	println(s)
+	# println(s)
 	return all(map(e->e ≈ 1,s))
 end
 
 #TODO: benchmark vs ^^^
 function isCondNorm2(tensor; cdim::Int=ndims(tensor))
-	checkCondDim(tensor, cdim)
+	checkDim(tensor, cdim)
 	cdimRange = 1:size(tensor)[cdim]
 	res = [ isNorm(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange]
 	return all(res)
@@ -103,10 +103,35 @@ end
 
 # Normalisation for conditional probability distributions
 function condNormalize(tensor; cdim::Int=ndims(tensor))
-	checkCondDim(tensor, cdim)
+	checkDim(tensor, cdim)
 	cdimRange = 1:size(tensor)[cdim]
-	println(cdimRange)
+	# println(cdimRange)
 	res = [ normalize(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange ]
-	println(res)
+	# println(res)
 	return cat(res..., dims=cdim)
+end
+
+# Returns the 
+function marginal(tensor, dimlist)
+	if length(dimlist) != ndims(tensor)-1
+		throw(ArgumentError("Can only compute a marginal for ndim(tensor)-1 variables."))
+	end
+	mdim = filter(x-> x ∉ dimlist, 1:ndims(tensor))[1]
+	return marginalize(tensor, mdim=mdim)
+end
+
+# Marinalises the given tensor over the mdim dimension 
+# By default uses the last dimension as dimension to marginalize over.
+function marginalize(tensor; mdim=ndims(tensor))
+	checkDim(tensor, mdim)
+	# TODO: see how this dropdims propagates in other future code?
+	return dropdims(sum(tensor, dims=mdim), dims=mdim)
+end
+
+# Calculates the probaility of var given cset 
+function conditional(tensor, var, cset=nothing)
+	if cset==nothing
+		throw(ArgumentError("Can only compute a conditonal when a conditioning set is given."))
+	end
+	#TODO: finish this.
 end
