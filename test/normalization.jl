@@ -24,12 +24,29 @@ condNormC = [ [0.167  0.714  0.5] ; [0.833 0.286  0.5] ]
 # Exc 3.3 b)
 toCondNormD = toNormB
 condNormD = cat([ [0.231  0.385]; [0.154  0.231] ], [ [0.333 0.167]; [ 0.333 0.167] ], dims=3)
+#TODO: fix dimensions
 margNormA = [ 0.316,0.368,0.316 ]
+println(typeof(margNormA))
+println(margNormA)
+#println(normA)
+println(marginal(normA,[2]))
+#println(broadcast(/,normA,marginal(normA,[2])))
+println(typeof(marginal(normA,[2])))
+#TODO: fix dimensions
 margNormB = [ 0.421 0.158; 0.263 0.158 ]
+println("----------")
+println(typeof(margNormB))
+println(margNormB)
+#println(normB)
+println(marginal(normB,[1,3]))
+#println(broadcast(/,normB,marginal(normB,[1,3])))
+println(typeof(marginal(normB,[1,3])))
+condA = []
+condB = []
 
 @testset "Testing conditional probablity from Joint" begin
-	@test isapprox(condA, conditional(normA, 1, cset=[2])normA,[2]), atol=1e-3)
-	@test isapprox(condB, conditional(normB, 1, cset=[2])normA,[2]), atol=1e-3)
+	#@test isapprox(condA, conditional(normA, 1, cset=[2]), atol=1e-3)
+	#@test isapprox(condB, conditional(normB, 1, cset=[2]),[2]), atol=1e-3)
 end
 
 @testset "Testing marginalisation" begin

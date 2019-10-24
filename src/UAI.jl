@@ -6,7 +6,7 @@ module UAI
 	using Random
 	using Distributions
 	export genRandTot, normRands, normRandsTensor, isStrictPos, isNorm, normalize, sliceOverDim
-	export isCondNorm, condNormalize, marginalize, marginal
+	export isCondNorm, condNormalize, marginalize, marginal, conditional
 
 	include("normalization.jl")
 

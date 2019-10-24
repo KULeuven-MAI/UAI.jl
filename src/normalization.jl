@@ -120,18 +120,31 @@ function marginal(tensor, dimlist)
 	return marginalize(tensor, mdim=mdim)
 end
 
-# Marinalises the given tensor over the mdim dimension 
+# Marginalises the given tensor over the mdim dimension 
 # By default uses the last dimension as dimension to marginalize over.
 function marginalize(tensor; mdim=ndims(tensor))
 	checkDim(tensor, mdim)
-	# TODO: see how this dropdims propagates in other future code?
-	return dropdims(sum(tensor, dims=mdim), dims=mdim)
+	return sum(tensor, dims=mdim)
 end
 
-# Calculates the probaility of var given cset 
-function conditional(tensor, var, cset=nothing)
+# Calculates the probaility of var given cset [P(a|b)]
+# TODO: see whether var also has to be a list
+# var is a
+# P(a|b) = P(a,b) / P(b)
+# TODO: testing & debugging
+function conditional(tensor, var::Int, cset=nothing)
 	if cset==nothing
 		throw(ArgumentError("Can only compute a conditonal when a conditioning set is given."))
 	end
-	#TODO: finish this.
+	if !isNorm(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
+	end
+	if cset + 1 != ndims(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
+	end
+	if var in cset
+		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
+	end
+	marginal = marginal(tensor,cset)
+	return broadcast(/, tensor, marginal)
 end
