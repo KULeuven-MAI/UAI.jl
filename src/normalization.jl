@@ -132,19 +132,20 @@ end
 # var is a
 # P(a|b) = P(a,b) / P(b)
 # TODO: testing & debugging
-function conditional(tensor, var::Int, cset=nothing)
+function conditional(tensor, var::Int; cset=nothing)
 	if cset==nothing
 		throw(ArgumentError("Can only compute a conditonal when a conditioning set is given."))
 	end
 	if !isNorm(tensor)
 		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
 	end
-	if cset + 1 != ndims(tensor)
+	if length(cset) + 1 != ndims(tensor)
 		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
 	end
 	if var in cset
 		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
 	end
-	marginal = marginal(tensor,cset)
-	return broadcast(/, tensor, marginal)
+	println(cset)
+	denom = marginal(tensor, cset)
+	return broadcast(/, tensor, denom)
 end
