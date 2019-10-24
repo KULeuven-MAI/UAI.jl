@@ -145,7 +145,6 @@ function conditional(tensor, var::Int; cset=nothing)
 	if var in cset
 		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
 	end
-	println(cset)
 	denom = marginal(tensor, cset)
 	return broadcast(/, tensor, denom)
 end
