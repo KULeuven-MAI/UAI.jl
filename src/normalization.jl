@@ -11,6 +11,11 @@ function genRandTot(n,t)
 	end
 end
 
+# Given a tensor returns the elementwise 1-complementing tensor.
+function oneComplement(tensor)
+	return map(x -> 1 - x, tensor)	
+end
+
 # Generates an array of n random but normalized numbers. 
 function normRands(n::Int)
 	genRandTot(n,1)
@@ -35,10 +40,11 @@ function isStrictPos(tensor)
 	mapreduce(x -> x > 0, &, tensor)
 end
 
-# Tests whether the tensor is normalized.
+# Checks if the given tensor is a valid Joint Probablity Distribution
+# Checks normalisation constraint for given tensor. 
 # Note that \approx (a.k.a. isapprox()) is used due to numerical considerations.
-function isNorm(tensor)
-	isStrictPos(tensor) & (sum(tensor) ≈ 1)
+function isJPD(tensor)
+	return isStrictPos(tensor) & (sum(tensor) ≈ 1)
 end
 
 # If possible normalizes the tensor, errors otherwise.
@@ -46,7 +52,7 @@ function normalize(tensor)
 	if !(isStrictPos(tensor))
 		throw(DomainError("A tensor to be normalized should be strictly positive everywhere."))
 	end
-	if isNorm(tensor)
+	if isJPD(tensor)
 		return tensor
 	else
 		s = sum(tensor)
@@ -54,11 +60,20 @@ function normalize(tensor)
 	end
 end
 
+
 # Checks the validity of the conditioning dimension.
 function checkDim(tensor, cdim)
 	if !(cdim in 1:ndims(tensor))
-			throw(ArgumentError("The conditioning set dimension is invalid for the given tensor"))
+		throw(ArgumentError("The following conditioning set dimension is invalid for the given tensor:", cdim))
 	end
+end
+
+# Checks the validity of the conditioning set.
+function checkCset(tensor, cset)
+	if cset == nothing
+		throw(ArgumentError("The conditioning set can't be empty."))
+	end
+	[checkDim(tensor,c) for c in cset]
 end
 
 # Returns whether the tensor is normalized w.r.t. the cdim conditioning set dimension.
@@ -79,7 +94,7 @@ end
 function isCondNorm2(tensor; cdim::Int=ndims(tensor))
 	checkDim(tensor, cdim)
 	cdimRange = 1:size(tensor)[cdim]
-	res = [ isNorm(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange]
+	res = [ isJPD(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange]
 	return all(res)
 end
 
@@ -101,9 +116,13 @@ function sliceOverDim(tensor, i; dim=nothing)
 end
 
 
-# Normalisation for conditional probability distributions
-function condNormalize(tensor; cdim::Int=ndims(tensor))
-	checkDim(tensor, cdim)
+# Normalisation for conditional probability tables 
+function condNormalize(tensor; cdim::Int)
+	try 
+		checkDim(tensor, cdim)
+	catch;
+		rethrow()
+	end
 	cdimRange = 1:size(tensor)[cdim]
 	# println(cdimRange)
 	res = [ normalize(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange ]
@@ -111,34 +130,44 @@ function condNormalize(tensor; cdim::Int=ndims(tensor))
 	return cat(res..., dims=cdim)
 end
 
+#TODO with more than one cdim a cset
+#function condNormalize(tensor; cset::AbstractArray)
+#	checkCset(tensor, cset)	
+#	cdimRange = 1:size(tensor)[cdim]
+#	# println(cdimRange)
+#	res = [ normalize(sliceOverDim(tensor, i, dim=cdim)) for i in cdimRange ]
+#	# println(res)
+#	return cat(res..., dims=cdim)
+#end
+
 # Returns the 
 function marginal(tensor, dimlist)
 	if length(dimlist) != ndims(tensor)-1
 		throw(ArgumentError("Can only compute a marginal for ndim(tensor)-1 variables."))
 	end
 	mdim = filter(x-> x ∉ dimlist, 1:ndims(tensor))[1]
-	return marginalize(tensor, mdim=mdim)
+	return margOver(tensor, mdim=mdim)
 end
 
 # Marginalises the given tensor over the mdim dimension 
 # By default uses the last dimension as dimension to marginalize over.
-function marginalize(tensor; mdim=ndims(tensor))
-	checkDim(tensor, mdim)
-	return sum(tensor, dims=mdim)
+# Calculates P(x_0 ... x_{i-1} x_{i+1}) where mdim corresponsds to x_i
+function margOver(jpd; mdim=ndims(tensor))
+	isJPD(jpd)
+	checkDim(jpd, mdim)
+	return sum(jpd, dims=mdim)
 end
 
-# Calculates the probaility of var given cset [P(a|b)]
+# Calculates the probaility of var given a single cdim [P(a|cdim)]
 # TODO: see whether var also has to be a list
 # var is a
 # P(a|b) = P(a,b) / P(b)
 # TODO: testing & debugging
-function conditional(tensor, var::Int; cset=nothing)
-	if cset==nothing
-		throw(ArgumentError("Can only compute a conditonal when a conditioning set is given."))
-	end
-	if !isNorm(tensor)
+function conditional(tensor, var::Int; cdim::Int)
+	if !isJPD(tensor)
 		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
 	end
+	checkDim(tensor, cdim)
 	if length(cset) + 1 != ndims(tensor)
 		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
 	end
@@ -146,5 +175,44 @@ function conditional(tensor, var::Int; cset=nothing)
 		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
 	end
 	denom = marginal(tensor, cset)
+	return broadcast(/, tensor, denom)
+end
+
+# Calculates the probaility of var given cset [P(a|c1,c2 ...)]
+# var is a
+# P(a|b) = P(a,b) / P(b)
+# TODO: testing & debugging
+function conditional(tensor, var::Int; cset::AbstractArray)
+	if !isJPD(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
+	end
+	checkCset(tensor,cset)
+	if length(cset) + 1 != ndims(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
+	end
+	if var in cset
+		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
+	end
+	denom = marginal(tensor, cset)
+	return broadcast(/, tensor, denom)
+end
+
+# Calculates the probaility of var given cset [P(a|c1,c2 ...)]
+# TODO: see whether var also has to be a list
+# var is a
+# P(a|b) = P(a,b) / P(b)
+# TODO: testing & debugging
+function conditional(tensor, var::Int; cset::AbstractArray)
+	if !isJPD(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
+	end
+	checkCset(tensor,cset)
+	if length(cset) + 1 != ndims(tensor)
+		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
+	end
+	if var in cset
+		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
+	end
+	denom = marginal(tensor, first(cset))
 	return broadcast(/, tensor, denom)
 end

@@ -29,37 +29,48 @@ margNormA = reshape([0.316,0.368,0.316],(1,3))
 margNormB = reshape([ 0.421 0.158; 0.263 0.158 ], (2, 1, 2))
 condA = condA = reshape([0.168  0.715  0.5;  0.832  0.285  0.5],(2,3))
 condB =	cat([[0.375  0.625]; [0.399  0.601]], [[0.665  0.335]; [0.665  0.335]], dims=3)
+test123 = cat([[ 0.1 0.1]; [0.1 0.2] ], [ [ 0.3 0.05 ]; [ 0.1 0.05 ] ], dims=3)
+#cond23 = 
 
-@testset "Testing conditional probablity from Joint" begin
-	@test_throws ArgumentError conditional(normA, 1, cset=[1,2])
-	@test isapprox(condA, conditional(normA, 1, cset=[2]), atol=1e-3)
-	@test_throws ArgumentError conditional(normB, 1, cset=[2])
-	# A weird bug makes this test fail
-	# https://discourse.julialang.org/t/bug-isapprox-different-results-elementwise-julia-1-1-0/30271?u=dcastel
-	#@test isapprox(condB, conditional(normB, 2, cset=[1,3]), atol=1e-3)
+@testset "One complement" begin
+	@test oneComplement(n) == [[0.8 0.7 0.9]; [0.8 0.95 0.85]]
 end
+
+#TODO
+#@testset "Testing conditional probablity from Joint" begin
+#	@test_throws ArgumentError conditional(normA, 1, cdim=9)
+#	@test_throws ArgumentError conditional(normA, 1, cset=[1,2])
+#	@test_throws ArgumentError conditional(normB, 1, cset=[2])
+#	@test isapprox(condA, conditional(normA, 1, cdim=2), atol=1e-3)
+#	# A weird bug made this test fail
+#	# https://discourse.julialang.org/t/bug-isapprox-different-results-elementwise-julia-1-1-0/30271?u=dcastel
+#	# Elementwise isapprox solves this usecase. 
+#	@test all(isapprox.(condB, conditional(normB, 2, cset=[1,3]), atol=1e-3))
+#	@test isCondNorm(conditional(normA, 1, cdim=2), cdim=2)
+#	#@test isCondNorm(conditional(normB, 2, cset=[1,3]))
+#	@test isCondNorm(conditional(test123, 1, cset=[2,3]))
+#end
 
 @testset "Testing marginalisation" begin
 	@test isapprox(margNormA, marginal(normA,[2]), atol=1e-3)
-	@test isapprox(margNormA, marginalize(normA, mdim=1), atol=1e-3)
+	@test isapprox(margNormA, margOver(normA, mdim=1), atol=1e-3)
 	@test isapprox(margNormB, marginal(normB,[1,3]), atol=1e-3)
-	@test isapprox(margNormB, marginalize(normB, mdim=2), atol=1e-3)
+	@test isapprox(margNormB, margOver(normB, mdim=2), atol=1e-3)
 end
 
 @testset "Testing the conditional normalization" begin
 	@test_throws ArgumentError condNormalize(toCondNormC, cdim=4)
 	@test_throws ArgumentError condNormalize(toCondNormC, cdim=-1)
-	@test !isCondNorm(strictPos)
-	@test !isCondNorm(notNorm)
+	@test !isCondNorm(strictPos, cdim=2)
+	@test !isCondNorm(notNorm, cdim=2)
 	@test isCondNorm(condNormC, cdim=2)
-	@test isCondNorm(condNormC)
+	@test isCondNorm(condNormC, cdim=2)
 	# TODO: improve handling of approx atol
 	#= @test isCondNorm(condNormD, cdim=3)  =#
+	# Do we want a shorthand for using the last dimension?
 	#= @test isCondNorm(condNormD)  =#
 	@test isapprox(condNormC, condNormalize(toCondNormC, cdim=2), atol=1e-3) 
-	@test isapprox(condNormC, condNormalize(toCondNormC), atol=1e-3) 
 	@test isapprox(condNormD, condNormalize(toCondNormD, cdim=3), atol=1e-3) 
-	@test isapprox(condNormD, condNormalize(toCondNormD), atol=1e-3) 
 end
 
 @testset "Testing the slicing function" begin
@@ -77,14 +88,14 @@ end
 
 
 @testset "Testing the normalisation of non-normalized tensors" begin
-	@test isNorm(normalize(strictPos))
+	@test isJPD(normalize(strictPos))
 	@test_throws DomainError normalize(hasZero)
 	@test_throws DomainError normalize(hasNeg)
 	@test_throws DomainError normalize(notNorm)
-	@test isNorm(normalize(n))
-	@test isNorm(normalize(toNormA))
+	@test isJPD(normalize(n))
+	@test isJPD(normalize(toNormA))
 	@test isapprox(normA, normalize(toNormA), atol=1e-3) 
-	@test isNorm(normalize(toNormB)) 
+	@test isJPD(normalize(toNormB)) 
 	@test isapprox(normB, normalize(toNormB), atol=1e-3) 
 end
 
@@ -96,37 +107,37 @@ end
 end
 
 @testset "Normalisation check" begin
-	@test !(isNorm(strictPos))
-	@test !(isNorm(hasZero))
-	@test !(isNorm(hasNeg))
-	@test !(isNorm(notNorm))
-	@test isNorm(n)
+	@test !(isJPD(strictPos))
+	@test !(isJPD(hasZero))
+	@test !(isJPD(hasNeg))
+	@test !(isJPD(notNorm))
+	@test isJPD(n)
 end 
 
 r = normRands(20)
 @testset "Normalized random generation check" begin
-	@test isNorm(r)
-	@test isNorm(shuffle(r))
+	@test isJPD(r)
+	@test isJPD(shuffle(r))
 	# Usage of isapprox here as well
 	@test sum(genRandTot(10,2)) ≈ 2
-	@test isNorm(genRandTot(20,1)) 
-	@test isNorm(normRands(1)) 
-	@test isNorm(normRands(2)) 
-	@test isNorm(normRands(3)) 
-	@test isNorm(normRands(10)) 
-	@test isNorm(normRands(15)) 
-	@test isNorm(normRands(20)) 
-	@test isNorm(shuffle(normRands(20)))
-	#@test isNorm(normRandsShuf(20))
+	@test isJPD(genRandTot(20,1)) 
+	@test isJPD(normRands(1)) 
+	@test isJPD(normRands(2)) 
+	@test isJPD(normRands(3)) 
+	@test isJPD(normRands(10)) 
+	@test isJPD(normRands(15)) 
+	@test isJPD(normRands(20)) 
+	@test isJPD(shuffle(normRands(20)))
+	#@test isJPD(normRandsShuf(20))
 end 
 
 @testset "Normalized random tensor generation check" begin
-	@test isNorm(normRandsTensor((1)))
-	@test isNorm(normRandsTensor((1,2)))
-	@test isNorm(normRandsTensor((1,3)))
-	@test isNorm(normRandsTensor((2,3,4)))
-	@test isNorm(normRandsTensor((1,2,3,4)))
-	@test isNorm(normRandsTensor((1,2,3,4,5)))
-	@test isNorm(normRandsTensor((2,2,2,2,2,2,2,2)))
+	@test isJPD(normRandsTensor((1)))
+	@test isJPD(normRandsTensor((1,2)))
+	@test isJPD(normRandsTensor((1,3)))
+	@test isJPD(normRandsTensor((2,3,4)))
+	@test isJPD(normRandsTensor((1,2,3,4)))
+	@test isJPD(normRandsTensor((1,2,3,4,5)))
+	@test isJPD(normRandsTensor((2,2,2,2,2,2,2,2)))
 end
 

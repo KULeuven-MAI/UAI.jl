@@ -5,10 +5,14 @@ module UAI
 	using Match
 	using Random
 	using Distributions
-	export genRandTot, normRands, normRandsTensor, isStrictPos, isNorm, normalize, sliceOverDim
-	export isCondNorm, condNormalize, marginalize, marginal, conditional
 
 	include("normalization.jl")
+	export genRandTot, normRands, normRandsTensor, isStrictPos, isJPD, normalize, sliceOverDim
+	export isCondNorm, condNormalize, margOver, marginal, conditional, oneComplement
+
+	include("independence.jl")
+	export idpValue
+
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
