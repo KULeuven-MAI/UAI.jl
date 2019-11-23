@@ -13,6 +13,9 @@ module UAI
 	include("independence.jl")
 	export idpValue
 
+	include("parser.jl")
+	export parseGraph, parseUndiGraph, parseDiGraph
+
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
