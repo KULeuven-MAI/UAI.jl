@@ -1,4 +1,6 @@
 using LightGraphs
+# For flatten()
+using Base.Iterators 
 
 # Parser for converting ascii graphs into computational and visual graphs.
 # Supported:
@@ -17,6 +19,7 @@ colb = "z<a;a>b<c;c"
 spaceCola= "a > b < c ; c < e"
 
 # Examples of undirected graphs
+n=3
 fgs = string("f0 - h_0 - f_01 - h_i;","h_i - f_i - h_i+1; h_i - f_2*i - x_i;")
 str0 = "f_{0}-h_{0}-f_{1}-h_{1};"
 str1 = join(map(x->replace("h_{i} - f_{2*i} - x_{i};", r"i" => string(x)), 1:n))
@@ -96,7 +99,7 @@ end
 
 # From the given subParts array create a directed graph and a nodename list.
 function makeDiGraph(subParts)
-	throw error("TODO: Not yet fully implemented.")
+	error("TODO: Not yet fully implemented.")
 	allnodes = unique(collect(flatten(map(x->split(x,r"<|>"),subParts))))
 	println(allnodes)
 	totalNodes = length(allnodes)
