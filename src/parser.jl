@@ -38,6 +38,7 @@ function getNodeId(node, allnodes)
    return findfirst(x->x==node,allnodes)   
 end
 
+# Parsing and evaluating single digit addition/multiplication in subscripts.
 function parseSubScripts(str)
     #println(str)
     for m in eachmatch(r"(\d\*\d\+\d)",str)
@@ -60,7 +61,7 @@ function parseSubScripts(str)
     return str
 end
 
-# Parsing functions
+# From the given subParts array create an undirected graph and a nodename list.
 function makeUndiGraph(subParts)
     #println(subParts)
 	allnodes = sort(unique(collect(flatten(map(x->split(x,'-'),subParts)))))
@@ -93,7 +94,7 @@ function makeUndiGraph(subParts)
 end
 
 
-# Parsing directed graph
+# From the given subParts array create a directed graph and a nodename list.
 function makeDiGraph(subParts)
 	throw error("TODO: Not yet fully implemented.")
 	allnodes = unique(collect(flatten(map(x->split(x,r"<|>"),subParts))))
@@ -118,9 +119,9 @@ function parseGraph(str)
 	if str[end] == ';'
 		str = str[1:end-1]
 	end
-    str = removeSpaces(str)
-    str = parseSubScripts(str)
-    subParts = split(str, ';')
+	str = removeSpaces(str)
+	str = parseSubScripts(str)
+	subParts = split(str, ';')
 	undi = false
 	di = false
 	if in('-', str)
