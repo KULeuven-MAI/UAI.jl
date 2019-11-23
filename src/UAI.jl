@@ -16,6 +16,8 @@ module UAI
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph
 
+	include("visualizer.jl")
+	export drawGraph
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
