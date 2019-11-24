@@ -178,41 +178,5 @@ function conditional(tensor, var::Int; cdim::Int)
 	return broadcast(/, tensor, denom)
 end
 
+# TODO overloaded function with cset instead of one cdim
 # Calculates the probaility of var given cset [P(a|c1,c2 ...)]
-# var is a
-# P(a|b) = P(a,b) / P(b)
-# TODO: testing & debugging
-function conditional(tensor, var::Int; cset::AbstractArray)
-	if !isJPD(tensor)
-		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
-	end
-	checkCset(tensor,cset)
-	if length(cset) + 1 != ndims(tensor)
-		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
-	end
-	if var in cset
-		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
-	end
-	denom = marginal(tensor, cset)
-	return broadcast(/, tensor, denom)
-end
-
-# Calculates the probaility of var given cset [P(a|c1,c2 ...)]
-# TODO: see whether var also has to be a list
-# var is a
-# P(a|b) = P(a,b) / P(b)
-# TODO: testing & debugging
-function conditional(tensor, var::Int; cset::AbstractArray)
-	if !isJPD(tensor)
-		throw(ArgumentError("Can only compute a conditional probablity from a normalized JPD tensor."))
-	end
-	checkCset(tensor,cset)
-	if length(cset) + 1 != ndims(tensor)
-		throw(ArgumentError("Can only compute a conditional probablity with matching dimension."))
-	end
-	if var in cset
-		throw(ArgumentError("Can't compute a conditonal probabilty of a var that is also in the conditioning set."))
-	end
-	denom = marginal(tensor, first(cset))
-	return broadcast(/, tensor, denom)
-end
