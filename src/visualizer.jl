@@ -206,3 +206,13 @@ function drawGraph(whichOne,filename)
         drawFullGraph(filename,5,edgelabel=SP2Labels())
     end
 end
+
+function drawFromStr(str, filename; edgelabel=[])
+    (sg,nodes) = parseGraph(str)
+    if isempty(edgelabel)
+        edgelabel=repeat([""],ne(sg))
+    end
+    #println(str)
+    #println(nodes)
+    drawGraph(sg, nodes, filename, sizes=[1.3, 0.9], edgelabel=edgelabel)
+end
