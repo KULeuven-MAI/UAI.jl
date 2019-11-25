@@ -99,21 +99,47 @@ end
 
 # From the given subParts array create a directed graph and a nodename list.
 function makeDiGraph(subParts)
-	error("TODO: Not yet fully implemented.")
-	allnodes = unique(collect(flatten(map(x->split(x,r"<|>"),subParts))))
+#	error("TODO: Not yet fully implemented.")
+	regex = r"<|>"
+	toRight = ">"
+	toLeft = "<"
+	allnodes = unique(collect(flatten(map(x->split(x,regex),subParts))))
+    nodesNum = length(allnodes)
+    #println(nodesNum)
+	sg = SimpleDiGraph(nodesNum)
 	println(allnodes)
 	totalNodes = length(allnodes)
-	if dir
-		sg = SimpleDiGraph(totalNodes)
-		println(sg)
-		gplot(sg)
-		draw(SVG("test.svg", 16cm, 16cm), gplot(sg))
-	end
 	for p in subParts
-		pairs = makePairs(p)
-		# Sliding window to iterate over each pair?
-		#println(p)
+		nodes = split(p,regex) 
+		directions = collect(eachmatch(regex,p))
+        nodesLen = length(nodes)
+        #println(nodes)
+		dirIdx = 1
+        for (i,n) in enumerate(nodes)
+            #println(i)
+            #println(n)
+            #Get neighbor to the right
+            rightNb = i+1
+            if rightNb <= nodesLen
+                nodeId = getNodeId(n,allnodes)
+                rightNode = nodes[rightNb]
+                rightNodeId = getNodeId(rightNode,allnodes)
+				if directions[dirIdx].match == toRight
+					if !(has_edge(sg,nodeId,rightNodeId))
+						#println("Adding $nodeId > $rightNodeId")
+						add_edge!(sg,nodeId,rightNodeId)
+					end
+				else #left case
+					if !(has_edge(sg,rightNodeId,nodeId))
+						#println("Adding $nodeId < $rightNodeId")
+						add_edge!(sg,rightNodeId,nodeId)
+					end
+				end
+				dirIdx += 1
+            end
+        end
 	end
+    return (sg,allnodes)
 end
 
 # Function parses the given string as a graph depending on the type of string

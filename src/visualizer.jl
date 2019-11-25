@@ -207,12 +207,9 @@ function drawGraph(whichOne,filename)
     end
 end
 
-function drawFromStr(str, filename; edgelabel=[])
+function drawFromStr(str, filename)
     (sg,nodes) = parseGraph(str)
-    if isempty(edgelabel)
-        edgelabel=repeat([""],ne(sg))
-    end
-    #println(str)
-    #println(nodes)
-    drawGraph(sg, nodes, filename, sizes=[1.3, 0.9], edgelabel=edgelabel)
+    println(str)
+    println(nodes)
+    drawGraph(sg, nodes, filename)
 end
