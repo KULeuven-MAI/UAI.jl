@@ -17,10 +17,11 @@ module UAI
 	export parseGraph, parseUndiGraph, parseDiGraph
 
 	include("visualizer.jl")
-	export drawGraph
+	export drawGraph, drawFromStr
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
+# Use DataFrames for datasets
 
 # Lesson 2 
 # Make Noisy OR/AND
