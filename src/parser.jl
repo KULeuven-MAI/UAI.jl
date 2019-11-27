@@ -10,31 +10,11 @@ using Base.Iterators
 # TODO:
 #	- Chain Graphs
 
-# Examples of directed graphs
-tst1 = "a>b;b<a"
-tst2 = "a>b>c"
-col = "a>b<c"
-cola = "a>b<c;c<e"
-colb = "z<a;a>b<c;c"
-spaceCola= "a > b < c ; c < e"
-
-# Examples of undirected graphs
-n=3
-fgs = string("f0 - h_0 - f_01 - h_i;","h_i - f_i - h_i+1; h_i - f_2*i - x_i;")
-str0 = "f_{0}-h_{0}-f_{1}-h_{1};"
-str1 = join(map(x->replace("h_{i} - f_{2*i} - x_{i};", r"i" => string(x)), 1:n))
-str2 = join(map(x->replace("h_{i} - f_{2*i+1} - h_{i+1};", r"i" => string(x)), 1:(n-1)))
-mystr = string(str0,str1,str2)
-str = "f_0-a-f_1-b;b-f_3-c;c-f_5-d;d-f_6-x"
 
 
 # Utility functions
 function removeSpaces(str)
 	return join(split(str))
-end
-
-function makePairs(all)
-	a = split(all,r"<|>")
 end
 
 function getNodeId(node, allnodes)
@@ -98,8 +78,8 @@ end
 
 
 # From the given subParts array create a directed graph and a nodename list.
+# TODO testing
 function makeDiGraph(subParts)
-#	error("TODO: Not yet fully implemented.")
 	regex = r"<|>"
 	toRight = ">"
 	toLeft = "<"

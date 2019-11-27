@@ -4,6 +4,8 @@ using Compose
 using Colors
 using UnicodeFun
 using Cairo
+using UAI
+using LightGraphs
 
 # Visualisation code
 function getColor(nodeName)
@@ -20,10 +22,10 @@ end
 
 # Returns a dictionary for mapping numbers to the Simple Graph names.
 function getNum2Names()
-   return Dict(value => key for (key, value) in getNames2Num()[1:end-1]) 
+   return Dict(value => key for (key, value) in getNames2Num()[1:end-1])
 end
 
-# Converts 
+# Converts
 function numToNames(str)
     num2nam = getNum2Names()
     k = keys(getNum2Names())
@@ -38,7 +40,7 @@ end
 # Returns the (subscript) number of a node string.
 function getNum(str)
     names = getNames2Num()
-    if str in keys(names) 
+    if str in keys(names)
         return names[str]
     else
         r = match(r"\d+",str)
@@ -94,25 +96,44 @@ end
 
 #stripChar = (s, r) -> replace(s, Regex("[$r]") => "")
 
-function drawGraph(sg, nodes, filename; sizes = [1, 0.6], edgelabel=repeat([""],ne(sg)))
+# Plots factor graphs with factors starting with letter "f"
+#
+function plotFG2File(sg, nodes, filename; sizes = [1, 0.6], edgelabel=repeat([""],ne(sg)))
     nodecolor = [colorant"lightseagreen", colorant"orange"]
     membership = map(x->getColor(x),nodes)
-    locs_x = map(x->getX(x),nodes)
-    locs_y = map(x->getY(x),nodes)
+    locs_x = convert(Vector{Float64},map(x->getX(x),nodes))
+    locs_y = convert(Vector{Float64},map(x->getY(x),nodes))
     nodefillc = nodecolor[membership]
     nodesize = sizes[membership]
-    #println(length(locs_x))
-    #println(locs_x)
-    #println(length(locs_y))
-    #println(locs_y)
-    #println(length(nodefillc))
-    #println(length(nodes))
-    #println(length(nodesize))
+    println(length(locs_x))
+    println(locs_x)
+    println(typeof(locs_x))
+    println(length(locs_y))
+    println(locs_y)
+    println(typeof(locs_y))
+    println(length(nodefillc))
+    println(length(nodes))
+    println(length(nodesize))
     #tweakedLabels = map(x-> stripChar(x, "}{"),nodes)
     latexedLabels = map(x->latexHug(x),nodes)
     plot = gplot(sg,locs_x,locs_y,nodefillc=nodefillc,nodelabel=latexedLabels,nodesize=nodesize,edgelabel=edgelabel)
     #LaTeX can't handle SVGs ;_;
     draw(PNG(filename, 18cm, 9cm), plot)
+end
+
+
+function plot2File(sg, nodes, filename; sizes = [1, 0.6], edgelabel=repeat([""],ne(sg)))
+    nodecolor = [colorant"lightseagreen", colorant"orange"]
+	# TODO: generic way for passing params.
+    #membership = map(x->getColor(x),nodes)
+    #locs_x = convert(Vector{Float64},map(x->getX(x),nodes))
+    #locs_y = convert(Vector{Float64},map(x->getY(x),nodes))
+    #nodefillc = nodecolor[membership]
+    #nodesize = sizes[membership]
+    plot = gplot(sg,nodelabel=nodes)
+    #LaTeX can't handle SVGs ;_;
+    draw(PNG(filename, 18cm, 9cm), plot)
+
 end
 
 function drawFullGraph(filename,n; edgelabel=[])
@@ -126,7 +147,7 @@ function drawFullGraph(filename,n; edgelabel=[])
     end
     #println(str)
     #println(nodes)
-    drawGraph(sg, nodes, filename, sizes=[1.3, 0.9], edgelabel=edgelabel)
+    plotFG2File(sg, nodes, filename, sizes=[1.3, 0.9], edgelabel=edgelabel)
 end
 
 
@@ -137,14 +158,14 @@ function drawLinearGraph(filename)
     str2 = join(map(x->replace("h_{i} - f_{2*i+1} - h_{i+1};", r"i" => string(x)), 1:(n-1)))
     str = string(str0,str1,str2[1:end-1]) #omit last ;
     (sg,nodes) = parseGraph(str)
-    drawGraph(sg, nodes, filename)
+    plotFG2File(sg, nodes, filename)
 end
 
 function drawSimpleLinear(filename)
     n = 3
     str = "f_0-a-f_1-b;b-f_3-c;c-f_5-d;d-f_6-x"
     (sg,nodes) = parseGraph(str)
-    drawGraph(sg, nodes, filename)
+    plotFG2File(sg, nodes, filename)
 end
 
 function SP1Labels()
@@ -211,5 +232,10 @@ function drawFromStr(str, filename)
     (sg,nodes) = parseGraph(str)
     println(str)
     println(nodes)
-    drawGraph(sg, nodes, filename)
+	println("test1")
+	for e in collect(edges(sg))
+		println(e)
+	end
+	println("test2")
+    plot2File(sg, nodes, filename)
 end
