@@ -17,14 +17,22 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 ### Plots 
 
 
-#### Collider
+#### Bayesian Network - Collider
+
+`drawFromStr("a>c<b", "plots/collider.png")`
 ![](plots/collider.png)
 
-#### Fork
+#### Bayesian Network - Fork
+`drawFromStr("a<f>b", "plots/fork.png")`
 ![](plots/fork.png)
 
-#### Chain
+#### Bayesian Network - Chain
+`drawFromStr("a>b>c", "plots/chain.png")`
 ![](plots/chain.png)
+
+#### Markov Network - A grid with a loop 
+`drawFromStr("a-b-c-d-a", "plots/grid.png")`
+![](plots/grid.png)
 
 ## In progress Features
 
