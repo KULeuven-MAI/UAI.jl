@@ -8,10 +8,10 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 - Testing normalization of a tensor.
 - Normalizing tensors overall.
 - Normalizing tensors with a condition set.
+- Plotting (factor) graphs, (Hidden) Markov Models, (di)graphical models, Bayesian Networks
 - Mermaid-JS like easy, human-and-machine readable graphical model construction. e.g.:
 	- c is a collider of a and b `a>c<b`
 	- `a-b-c` is a linear (Markov) chain
-- Displaying (factor) graphs, Hidden Markov Models, (di)graphical models
 
 ## Installation
 You can get [Julia 1.3 here](https://julialang.org/downloads/). 
@@ -75,8 +75,8 @@ If you're using Jupyter notebooks with the IJulia kernel you can include display
 ## Wanted Features
 
 - Tools for step-by-step probabilistic reasoning: application of definitions, Bayes rule, soft logic gates, ...
-- Visualization of the simplified sum-product algorithm for non-branching graphs
-- Visualization of the (Sum|Max)-Product algorithm
+- (Interactive?) Visualization of the simplified sum-product algorithm for non-branching graphs
+- (Interactive?) Visualization of the (Sum|Max)-Product algorithm
 - Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Interactive and visualized probabilistic problem solving challenges.
 - SVG support for drawFromStr()
