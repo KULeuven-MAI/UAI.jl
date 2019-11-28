@@ -7,6 +7,12 @@ tst1 = "a>b;b<a"
 tst2 = "a>b>c"
 
 collider = "a>c<b"
+colG = SimpleDiGraph(3)
+add_edge!(colG,1,2)
+add_edge!(colG,3,2)
+
+
+
 collider2 = "e>a>c<b<d"
 collider3 = "e>a>c; c<b<d"
 fork = "a<f>b"
@@ -45,4 +51,7 @@ end
 	(sg,nodes) = parseGraph(collider)
 	@test typeof(sg) == SimpleDiGraph{Int64} 
 	@test sort(nodes) == ["a","b","c"]
+	for e in edges(colG)
+	   @test has_edge(g,e)
+	end
 end

@@ -8,15 +8,19 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 - Testing normalization of a tensor.
 - Normalizing tensors overall.
 - Normalizing tensors with a condition set.
-
-## In progress Features
-
 - Mermaid-JS like easy, human-and-machine readable graphical model construction. e.g.:
 	- c is a collider of a and b `a>c<b`
 	- `a-b-c` is a linear (Markov) chain
-	- `a-b-c; e<b>d` is a mixed model with a fork extending from b
-	- ...
 - Displaying (factor) graphs, Hidden Markov Models, (di)graphical models
+
+
+### Plots 
+![](plots/collider.png)
+![](plots/fork.png)
+
+## In progress Features
+
+- Mixed model representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b
 
 ## Wanted Features
 
@@ -25,4 +29,4 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 - Visualization of the (Sum|Max)-Product algorithm
 - Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Interactive and visualized probabilistic problem solving challenges.
-
+- SVG support for drawFromStr()

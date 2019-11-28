@@ -124,6 +124,7 @@ end
 
 # Function parses the given string as a graph depending on the type of string
 # Returns a tuple of type (Graph,[NodeNameStr])
+# TODO: add a strict ordering (e.g. alphabetically)
 function parseGraph(str)
 	if str[end] == ';'
 		str = str[1:end-1]
