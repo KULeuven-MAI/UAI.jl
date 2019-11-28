@@ -48,23 +48,37 @@ If you're using Jupyter notebooks with the IJulia kernel you can include display
 ![](plots/collider.png
 ``` 
 
-### Plots 
+## Contributing
+
+I warmly welcome contributions. Julia is a pleasure to work with imho, increasing in popluarity, ready for high performance computing and used more and more in the Data Science community. An ideal choice to try it with this project.
+
+I'm trying to write extensive tests you can run those as follows:
+
+```Julia
+git clone https://github.com/KULeuven-MAI/UAI.jl
+cd UAI.jl
+] test
+```
+If you create a PR, please make sure the test are succeeding, fix them if necessary.
 
 
-#### Bayesian Network - Collider
+## Plots 
+
+
+### Bayesian Network - Collider
 
 `drawFromStr("a>c<b", "plots/collider.png")`
 ![](plots/collider.png)
 
-#### Bayesian Network - Fork
+### Bayesian Network - Fork
 `drawFromStr("a<f>b", "plots/fork.png")`
 ![](plots/fork.png)
 
-#### Bayesian Network - Chain
+### Bayesian Network - Chain
 `drawFromStr("a>b>c", "plots/chain.png")`
 ![](plots/chain.png)
 
-#### Markov Network - A grid with a loop 
+### Markov Network - A grid with a loop 
 `drawFromStr("a-b-c-d-a", "plots/grid.png")`
 ![](plots/grid.png)
 
@@ -79,4 +93,4 @@ If you're using Jupyter notebooks with the IJulia kernel you can include display
 - (Interactive?) Visualization of the (Sum|Max)-Product algorithm
 - Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Interactive and visualized probabilistic problem solving challenges.
-- SVG support for drawFromStr()
+- SVG support for drawFromStr() (see #1)
