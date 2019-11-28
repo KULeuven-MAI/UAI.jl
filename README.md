@@ -37,7 +37,7 @@ drawFromStr("a>c<b", "plots/collider.png"
 
 ```Julia
 import Pkg
-Pkg.add(Pkg.PackageSpec(url=\"https://github.com/KULeuven-MAI/UAI.jl\"))
+Pkg.add(Pkg.PackageSpec(url="https://github.com/KULeuven-MAI/UAI.jl"))
 using UAI
 drawFromStr("a>c<b", "plots/collider.png"
 ```
