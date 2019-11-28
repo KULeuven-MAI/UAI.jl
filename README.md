@@ -15,8 +15,16 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 
 
 ### Plots 
+
+
+#### Collider
 ![](plots/collider.png)
+
+#### Fork
 ![](plots/fork.png)
+
+#### Chain
+![](plots/chain.png)
 
 ## In progress Features
 
