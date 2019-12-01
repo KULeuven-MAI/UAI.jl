@@ -230,12 +230,12 @@ end
 
 function drawFromStr(str, filename)
     (sg,nodes) = parseGraph(str)
-    println(str)
-    println(nodes)
-	println("test1")
+    #println(str)
+    #println(nodes)
+	#println("test1")
 	for e in collect(edges(sg))
 		println(e)
 	end
-	println("test2")
+	#println("test2")
     plot2File(sg, nodes, filename)
 end
