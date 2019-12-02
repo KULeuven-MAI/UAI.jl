@@ -87,7 +87,7 @@ function makeDiGraph(subParts)
     nodesNum = length(allnodes)
     #println(nodesNum)
 	sg = SimpleDiGraph(nodesNum)
-	println(allnodes)
+	#println(allnodes)
 	totalNodes = length(allnodes)
 	for p in subParts
 		nodes = split(p,regex) 
