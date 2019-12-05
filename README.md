@@ -45,7 +45,7 @@ drawFromStr("a>c<b", "plots/collider.png"
 If you're using Jupyter notebooks with the IJulia kernel you can include display the generated png simply by using the following markdown syntax:
 
 ```Markdown
-![](plots/collider.png
+![](plots/collider.png)
 ``` 
 
 ## Contributing
