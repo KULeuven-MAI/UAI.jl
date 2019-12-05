@@ -30,7 +30,7 @@ instantiate
 <backspace>
 using UAI 
 # precompiled and all set for e.g. this:
-drawFromStr("a>c<b", "plots/collider.png"
+drawFromStr("a>c<b", "plots/collider.png")
 ```
 
 ### Using Julia REPL/jupyter notebook
@@ -39,7 +39,7 @@ drawFromStr("a>c<b", "plots/collider.png"
 import Pkg
 Pkg.add(Pkg.PackageSpec(url="https://github.com/KULeuven-MAI/UAI.jl"))
 using UAI
-drawFromStr("a>c<b", "plots/collider.png"
+drawFromStr("a>c<b", "plots/collider.png")
 ```
 
 If you're using Jupyter notebooks with the IJulia kernel you can include display the generated png simply by using the following markdown syntax:
