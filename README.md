@@ -96,3 +96,4 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 - SVG support for drawFromStr() (see [#1](https://github.com/KULeuven-MAI/UAI.jl/issues/1))
 - Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
 - Plate notation
+- Displaying matrices & vectors beautifully.
