@@ -97,10 +97,10 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 - Interactive and visualized probabilistic problem solving challenges.
 - SVG support for drawFromStr() (see [#1](https://github.com/KULeuven-MAI/UAI.jl/issues/1))
 - Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
-- **<<Your suggestion here>>**
+- **\< Your suggestion here \>**
 
 ## Nice to have features
 
 - Plate notation
 - Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
-- **<<Your suggestion here>>**
+- **\< Your suggestion here \>**
