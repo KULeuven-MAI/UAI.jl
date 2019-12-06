@@ -102,6 +102,6 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 ## Nice to have features
 
 - Plate notation
-- Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
+- Integration of [this paper](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Integration with [Probabilistic Programming Language Turing.jl](https://turing.ml/dev/docs/using-turing/get-started)?
 - **\< Your suggestion here \>**
