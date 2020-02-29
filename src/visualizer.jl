@@ -133,7 +133,9 @@ function plot2File(sg, nodes, filename; sizes = [1, 0.6], edgelabel=repeat([""],
     plot = gplot(sg,nodelabel=nodes)
     #LaTeX can't handle SVGs ;_;
     draw(PNG(filename, 18cm, 9cm), plot)
-
+	#TODO: auto plotting in Jupyter notebook:
+	#Like:
+	#https://github.com/JuliaGraphics/Luxor.jl/blob/4f1166407042e307f2c0df701fcdca9777aa393d/src/drawings.jl#L78
 end
 
 function drawFullGraph(filename,n; edgelabel=[])
