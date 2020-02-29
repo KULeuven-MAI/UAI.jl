@@ -30,7 +30,7 @@ instantiate
 <backspace>
 using UAI 
 # precompiled and all set for e.g. this:
-drawFromStr("a>c<b", "plots/collider.png"
+drawFromStr("a>c<b", "plots/collider.png")
 ```
 
 ### Using Julia REPL/jupyter notebook
@@ -39,18 +39,18 @@ drawFromStr("a>c<b", "plots/collider.png"
 import Pkg
 Pkg.add(Pkg.PackageSpec(url="https://github.com/KULeuven-MAI/UAI.jl"))
 using UAI
-drawFromStr("a>c<b", "plots/collider.png"
+drawFromStr("a>c<b", "plots/collider.png")
 ```
 
 If you're using Jupyter notebooks with the IJulia kernel you can include display the generated png simply by using the following markdown syntax:
 
 ```Markdown
-![](plots/collider.png
+![](plots/collider.png)
 ``` 
 
 ## Contributing
 
-I warmly welcome contributions. Julia is a pleasure to work with imho, increasing in popluarity, ready for high performance computing and used more and more in the Data Science community. An ideal choice to try it with this project.
+I warmly welcome contributions. Julia is a pleasure to work with imho, increasing in popluarity, ready for high performance computing and used more and more in the Data Science community. An ideal choice to try it with this project. :)
 
 I'm trying to write extensive tests you can run those as follows:
 
@@ -59,7 +59,7 @@ git clone https://github.com/KULeuven-MAI/UAI.jl
 cd UAI.jl
 ] test
 ```
-If you create a PR, please make sure the test are succeeding, fix them if necessary.
+If you create a PR, please make sure the test are succeeding, fix them if necessary. (But I still have some catching up to do with writing tests. See [#3](https://github.com/KULeuven-MAI/UAI.jl/issues/3))
 
 
 ## Plots 
@@ -84,15 +84,24 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 
 ## In progress Features
 
-- Mixed model representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b
+- Mixed model representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b.
+- Displaying matrices & vectors beautifully (useful for visualizing algorithms) 
 
 ## Wanted Features
 
-- Tools for step-by-step probabilistic reasoning: application of definitions, Bayes rule, soft logic gates, ...
+- Accessibility (for ease of education with dyslexia, colorblindness, dyspraxia, ...)
+- Tools for step-by-step probabilistic reasoning: application of definitions, Bayes rule, pushing sums down, ...
+- Soft logic gates tool
 - (Interactive?) Visualization of the simplified sum-product algorithm for non-branching graphs
 - (Interactive?) Visualization of the (Sum|Max)-Product algorithm
-- Integration of [](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Interactive and visualized probabilistic problem solving challenges.
 - SVG support for drawFromStr() (see [#1](https://github.com/KULeuven-MAI/UAI.jl/issues/1))
 - Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
+- **\< Your suggestion here \>**
+
+## Nice to have features
+
 - Plate notation
+- Integration of [this paper](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
+- Integration with [Probabilistic Programming Language Turing.jl](https://turing.ml/dev/docs/using-turing/get-started)?
+- **\< Your suggestion here \>**
