@@ -144,3 +144,4 @@ function parseGraph(str)
 	end
 	# TODO support for Chain Graphs with both types of edges
 end
+
