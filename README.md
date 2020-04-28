@@ -13,7 +13,8 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 	- c is a collider of a and b `a>c<b`
 	- `a-b-c` is a linear (Markov) chain
 - Get factorisation from graphical model. 
- ```getFactorization("a<f>b")
+ ```Julia
+    getFactorization("a<f>b")
 	P(a,f,b) =
 	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])
   ```
