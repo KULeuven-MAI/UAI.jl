@@ -12,9 +12,13 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 - Mermaid-JS like easy, human-and-machine readable graphical model construction. e.g.:
 	- c is a collider of a and b `a>c<b`
 	- `a-b-c` is a linear (Markov) chain
+- Get factorisation from graphical model. 
+ ```getFactorization("a<f>b")
+	P(a,f,b) =
+	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])```
 
 ## Installation
-You can get [Julia 1.3 here](https://julialang.org/downloads/). 
+You can get [Julia 1.4 here](https://julialang.org/downloads/). 
 
 You can install this library in two different ways either by forking or using the Julia build-in Pkg package manager.
 

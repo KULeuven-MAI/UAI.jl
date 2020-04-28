@@ -19,6 +19,11 @@ module UAI
 	include("visualizer.jl")
 	export drawGraph, drawFromStr
 
+	include("types.jl")
+	export DiscreteVar, getDomain, assign, hasAssignment, hasDomain, setDomain
+	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
+	export getFactorization, getFactor
+
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
 # Use DataFrames for datasets

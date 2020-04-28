@@ -1,5 +1,6 @@
 using LightGraphs
 using UAI
+import Base.show
 
 struct DiscreteVar
 	domain::Array{Any}
@@ -7,8 +8,36 @@ struct DiscreteVar
 	name::String
 end
 
+abstract type AbstractFactor end
+
+# Factorization because the version with an s is taken already.
+struct Factorization
+	factors::Array{AbstractFactor}
+end
+
+struct MarginalFactor <: AbstractFactor
+	variable::DiscreteVar
+end
+
+struct ConditionalFactor <: AbstractFactor
+	variable::DiscreteVar
+	conditioningSet::Array{DiscreteVar}
+end
+
+struct JoinedFactor <: AbstractFactor
+	variables::Array{DiscreteVar}
+	factors::Factorization
+end
+
+function p(str)
+	return string("P(",str,")")
+end
 
 Base.show(io::IO, v::DiscreteVar) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
+Base.show(io::IO, v::MarginalFactor) = print(io,p(v.variable)) 
+Base.show(io::IO, v::JoinedFactor) = print(io,p(join(v.variables,",")))
+Base.show(io::IO, v::ConditionalFactor) = print(io,p(string(v.variable,"|",join(v.conditioningSet,","))))
+Base.show(io::IO, v::Factorization) = print(io,join(v.factors))
 
 function assign(v::DiscreteVar, value)
 	if value in v.domain
@@ -39,27 +68,23 @@ function getDomain(v::DiscreteVar)
 end
 
 
-function getFactor(graph,vertex,names)
-	inneighbors = inneighbors(graph,vertex)
+function getFactor(graph,vertex,names)::AbstractFactor
+	inneighbors = LightGraphs.inneighbors(graph,vertex)
 	if isempty(inneighbors)
-		return string("P(",names[v],")")
+		return MarginalFactor(DiscreteVar([],nothing,names[vertex]))
 	else
-		nbrs = join(map(x->names[x],inneighbors),",")
-		return string("P(",names[v],"|",nbrs,")")
+		nbrs = map(x->DiscreteVar([],nothing,names[x]),inneighbors)
+		return ConditionalFactor(DiscreteVar([],nothing,names[vertex]),nbrs)
 	end
 end
 
-function getFactorisation(str)
+function getFactorization(str)
 	(sg, allnodes) = parseGraph(str)
 	if is_directed(sg)
 		variables = map(x->DiscreteVar([],nothing,x),allnodes)
-		#end
-		for v in vertices(sg)
-					
-			end
-		end
-		factorisation = string("P(",join(allnodes,","),") = FACTORIZED")
-		return (factorisation, variables)
+		println(string("P(",join(allnodes,","),") ="))
+		factors = Factorization(map(v->getFactor(sg,v,allnodes),vertices(sg)))
+		return (factors, variables)
 	else
 		throw(error("Only directed graphs supported as of now."))
 	end
