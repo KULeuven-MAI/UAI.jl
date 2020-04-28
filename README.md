@@ -15,7 +15,8 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 - Get factorisation from graphical model. 
  ```getFactorization("a<f>b")
 	P(a,f,b) =
-	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])```
+	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])
+  ```
 
 ## Installation
 You can get [Julia 1.4 here](https://julialang.org/downloads/). 
