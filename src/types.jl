@@ -78,6 +78,7 @@ function getFactor(graph,vertex,names)::AbstractFactor
 	end
 end
 
+# TODO split out getVariables(str)?
 function getFactorization(str)
 	(sg, allnodes) = parseGraph(str)
 	if is_directed(sg)
@@ -90,6 +91,7 @@ function getFactorization(str)
 	end
 end
 
+#TODO getVariables(factoriz::Factorization)
 
 function getGraph(factoriz::Factorization)
 	return parseFactorization(string(factoriz))
