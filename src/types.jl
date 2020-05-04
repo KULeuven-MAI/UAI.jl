@@ -30,7 +30,7 @@ struct JoinedFactor <: AbstractFactor
 end
 
 function p(str)
-	return string("P(",str,")")
+	return string("p(",str,")")
 end
 
 Base.show(io::IO, v::DiscreteVar) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
@@ -82,10 +82,15 @@ function getFactorization(str)
 	(sg, allnodes) = parseGraph(str)
 	if is_directed(sg)
 		variables = map(x->DiscreteVar([],nothing,x),allnodes)
-		println(string("P(",join(allnodes,","),") ="))
+		println(string("p(",join(allnodes,","),") ="))
 		factors = Factorization(map(v->getFactor(sg,v,allnodes),vertices(sg)))
 		return (factors, variables)
 	else
 		throw(error("Only directed graphs supported as of now."))
 	end
+end
+
+
+function getGraph(factoriz::Factorization)
+	return parseFactorization(string(factoriz))
 end

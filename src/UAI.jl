@@ -14,7 +14,7 @@ module UAI
 	export idpValue
 
 	include("parser.jl")
-	export parseGraph, parseUndiGraph, parseDiGraph
+	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization 
 
 	include("visualizer.jl")
 	export drawGraph, drawFromStr
@@ -22,7 +22,7 @@ module UAI
 	include("types.jl")
 	export DiscreteVar, getDomain, assign, hasAssignment, hasDomain, setDomain
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
-	export getFactorization, getFactor
+	export getFactorization, getFactor, getGraph
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...

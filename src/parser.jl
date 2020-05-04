@@ -145,3 +145,35 @@ function parseGraph(str)
 	# TODO support for Chain Graphs with both types of edges
 end
 
+# Converts the simple 'given' ('a|b') notation into simple graph notation.
+function graphify(s)
+	println(s)
+	if '|' in s 
+		return replace(s, '|' => '<')
+	else
+		return s 
+	end
+end
+
+# Converts multiple 'given' notation ("a|b,c,d") into a subpart of simple graph notation
+function splitUp(s)
+	println("splitting $s")
+	sp = split(s,'|')		
+	conditionSet = split(sp[2],',')	
+	return map(x-> string(sp[1],'<',x), conditionSet)
+end
+
+# Parse a factorisation of the form p(a|b,c)p(x|a)p(x)
+# into a digraph
+function parseFactorization(str)
+	str = removeSpaces(str)		
+	str = join(split(str,'p'))
+	splits = split(str,')')
+	splits = map(x->x[2:end],splits[1:end-1])
+	#println(collect(splits))
+	mapped = map(s-> ',' in s ? splitUp(s) : graphify(s),splits)
+	subParts = vcat(mapped...)
+	#println(collect(subParts))
+	return makeDiGraph(subParts) 
+end
+
