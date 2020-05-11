@@ -78,11 +78,15 @@ function getFactor(graph,vertex,names)::AbstractFactor
 	end
 end
 
+function getVariables(names::Array{String})
+	return map(x->DiscreteVar([],nothing,x),names)
+end
+
 # TODO split out getVariables(str)?
 function getFactorization(str)
 	(sg, allnodes) = parseGraph(str)
 	if is_directed(sg)
-		variables = map(x->DiscreteVar([],nothing,x),allnodes)
+		variables = getVariables(allNodes) 
 		println(string("p(",join(allnodes,","),") ="))
 		factors = Factorization(map(v->getFactor(sg,v,allnodes),vertices(sg)))
 		return (factors, variables)
