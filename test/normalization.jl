@@ -1,5 +1,7 @@
 using UAI
+using Test
 using Random
+
 # Define testing variables.
 # strictPos is strictly positive.
 strictPos = [[1 2 3] ; [0.1 000.1 0.00000000001]]

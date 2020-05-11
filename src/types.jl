@@ -9,17 +9,19 @@ struct DiscreteVar
 end
 
 abstract type AbstractFactor end
+abstract type BayesianFactor <: AbstractFactor end
+abstract type MarkovFactor <: AbstractFactor end
 
 # Factorization because the version with an s is taken already.
 struct Factorization
 	factors::Array{AbstractFactor}
 end
 
-struct MarginalFactor <: AbstractFactor
+struct MarginalFactor <: BayesianFactor 
 	variable::DiscreteVar
 end
 
-struct ConditionalFactor <: AbstractFactor
+struct ConditionalFactor <: BayesianFactor 
 	variable::DiscreteVar
 	conditioningSet::Array{DiscreteVar}
 end
@@ -29,14 +31,24 @@ struct JoinedFactor <: AbstractFactor
 	factors::Factorization
 end
 
+struct PotentialFactor <: MarkovFactor 
+	variables::Array{DiscreteVar}
+end
+
 function p(str)
 	return string("p(",str,")")
 end
+
+function phi(str)
+	return string("ϕ(",str,")")
+end
+
 
 Base.show(io::IO, v::DiscreteVar) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
 Base.show(io::IO, v::MarginalFactor) = print(io,p(v.variable)) 
 Base.show(io::IO, v::JoinedFactor) = print(io,p(join(v.variables,",")))
 Base.show(io::IO, v::ConditionalFactor) = print(io,p(string(v.variable,"|",join(v.conditioningSet,","))))
+Base.show(io::IO, v::PotentialFactor) = print(io,phi(join(v.variables,",")))
 Base.show(io::IO, v::Factorization) = print(io,join(v.factors))
 
 function assign(v::DiscreteVar, value)
@@ -67,8 +79,10 @@ function getDomain(v::DiscreteVar)
 	return v.domain
 end
 
-
-function getFactor(graph,vertex,names)::AbstractFactor
+"""
+	Returns the corresponding factor of vertex v of the given graph with the given names.
+"""
+function getBayesianFactor(graph,vertex,names)::AbstractFactor
 	inneighbors = LightGraphs.inneighbors(graph,vertex)
 	if isempty(inneighbors)
 		return MarginalFactor(DiscreteVar([],nothing,names[vertex]))
@@ -78,20 +92,26 @@ function getFactor(graph,vertex,names)::AbstractFactor
 	end
 end
 
-function getVariables(names::Array{String})
+function getPotentialFactor(graph,clique,names)
+	vars = map(x->DiscreteVar([],nothing,names[x]), sort(clique))
+	return PotentialFactor(vars)	
+end
+
+function getVariables(names)
 	return map(x->DiscreteVar([],nothing,x),names)
 end
 
 # TODO split out getVariables(str)?
 function getFactorization(str)
-	(sg, allnodes) = parseGraph(str)
+	(sg, nodeNames) = parseGraph(str)
+	variables = getVariables(nodeNames) 
 	if is_directed(sg)
-		variables = getVariables(allNodes) 
-		println(string("p(",join(allnodes,","),") ="))
-		factors = Factorization(map(v->getFactor(sg,v,allnodes),vertices(sg)))
+		println(string("p(",join(nodeNames,","),") ="))
+		factors = Factorization(map(v->getBayesianFactor(sg,v,nodeNames),vertices(sg)))
 		return (factors, variables)
 	else
-		throw(error("Only directed graphs supported as of now."))
+		factors = Factorization(map(cl->getPotentialFactor(sg,cl,nodeNames),maximal_cliques(sg)))
+		return (factors,variables)
 	end
 end
 
