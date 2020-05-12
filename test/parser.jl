@@ -43,11 +43,11 @@ parseSubScripts
 @testset "Test subscript parsing" begin
 end
 
-@testset "Testing undirected graph parsingg" begin
+@testset "Testing undirected graph parsing" begin
 	#parseGraph("")
 end
 
-@testset "Testing directed graph parsingg" begin
+@testset "Testing directed graph parsing" begin
 	(sg,nodes) = parseGraph(collider)
 	@test typeof(sg) == SimpleDiGraph{Int64} 
 	@test sort(nodes) == ["a","b","c"]

@@ -77,21 +77,34 @@ function makeUndiGraph(subParts)
 end
 
 
+directedRegex = r"<|>"
+
+function getChainComponents(subParts)
+	nodeNames = getDiNodeNames(subParts)
+	(g,names) makeUndiGraph(nodeNames)
+	# Make edges in g double directed?
+	# Add directed edges.
+end
+
+function getDiNodeNames(subParts)
+	nodeNames = unique(collect(flatten(map(x->split(x,directedRegex),subParts))))
+	return nodeNames
+end
+
 # From the given subParts array create a directed graph and a nodename list.
 # TODO testing
 function makeDiGraph(subParts)
-	regex = r"<|>"
 	toRight = ">"
 	toLeft = "<"
-	allnodes = unique(collect(flatten(map(x->split(x,regex),subParts))))
+	allnodes = getDiNodeNames(subParts) 
     nodesNum = length(allnodes)
     #println(nodesNum)
 	sg = SimpleDiGraph(nodesNum)
 	#println(allnodes)
 	totalNodes = length(allnodes)
 	for p in subParts
-		nodes = split(p,regex) 
-		directions = collect(eachmatch(regex,p))
+		nodes = split(p,directedRegex) 
+		directions = collect(eachmatch(directedRegex,p))
         nodesLen = length(nodes)
         #println(nodes)
 		dirIdx = 1
@@ -125,6 +138,10 @@ end
 # Function parses the given string as a graph depending on the type of string
 # Returns a tuple of type (Graph,[NodeNameStr])
 # TODO: add a strict ordering (e.g. alphabetically)
+"""
+Function parses the given string as a graph depending on the type of string
+Returns a tuple of type (Graph,[NodeNameStr])
+"""
 function parseGraph(str)
 	if str[end] == ';'
 		str = str[1:end-1]
@@ -132,18 +149,27 @@ function parseGraph(str)
 	str = removeSpaces(str)
 	str = parseSubScripts(str)
 	subParts = split(str, ';')
-	undi = false
-	di = false
-	if in('-', str)
-		undi = true	
-		return makeUndiGraph(subParts)
-	end
-	if in('>',str) | in('<',str)
-		di = true
-		return makeDiGraph(subParts)
-	end
+	graphMakingFunction = getGraphStyleFunction(str)
+	return graphMakingFunction(subParts)
 	# TODO support for Chain Graphs with both types of edges
 end
+
+function makeChainGraph(subParts)
+		
+end
+
+function getGraphStyleFunction(str)
+	chainGraphFunc = makeChainGraph
+	discriminators = Dict(['<'=>makeDiGraph,'>'=>makeDiGraph,'-'=>makeUndiGraph])
+	flags = filter(x->in(x[1],str)==true,discriminators)
+	valLen = length(unique(values(flags)))
+	if valLen == 2
+		return chainGraphFunc	
+	else
+		return collect(flags)[1][2]
+	end
+end
+
 
 # Converts the simple 'given' ('a|b') notation into simple graph notation.
 function graphify(s)
