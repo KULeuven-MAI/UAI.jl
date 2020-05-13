@@ -79,15 +79,40 @@ end
 
 directedRegex = r"<|>"
 
+#TODO finish
 function getChainComponents(subParts)
 	nodeNames = getDiNodeNames(subParts)
-	(g,names) makeUndiGraph(nodeNames)
+	println("Directed:")	
+	println(nodeNames)
+	(g,names) = makeUndiGraph(nodeNames)
+	println(names)
+	nameDict = Dict(zip(1:nv(g),names))
+	for connVec in connected_components(g)  
+		#Chain components here:
+		println(map(x->nameDict[x],connVec))
+		println(connVec)
+	end
+	println("UnDirected:")	
+	undiNodeNames = getUndiNodeNames(subParts)
+	# dnames are the same but order can be different, account for that when merging the graphs.	
+	(dg, dnames) = makeDiGraph(undiNodeNames)
 	# Make edges in g double directed?
-	# Add directed edges.
+	for e in edges(g)
+		add_edge!(dg, src(e),dst(e))
+		add_edge!(dg, dst(e),src(e))
+	end
+	# for debugging
+	#draw(PNG("testParser.png", 16cm, 16cm), gplot(dg))
+	return (dg,dnames) 
 end
 
 function getDiNodeNames(subParts)
 	nodeNames = unique(collect(flatten(map(x->split(x,directedRegex),subParts))))
+	return nodeNames
+end
+
+function getUndiNodeNames(subParts)
+	nodeNames = unique(collect(flatten(map(x->split(x,'-'),subParts))))
 	return nodeNames
 end
 
@@ -155,7 +180,7 @@ function parseGraph(str)
 end
 
 function makeChainGraph(subParts)
-		
+	return getChainComponents(subParts)	
 end
 
 function getGraphStyleFunction(str)
