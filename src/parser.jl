@@ -102,7 +102,7 @@ function getChainComponents(subParts)
 		add_edge!(dg, dst(e),src(e))
 	end
 	# for debugging
-	#draw(PNG("testParser.png", 16cm, 16cm), gplot(dg))
+	draw(PNG("testParser.png", 16cm, 16cm), gplot(dg))
 	return (dg,dnames) 
 end
 
@@ -121,7 +121,7 @@ end
 function makeDiGraph(subParts)
 	toRight = ">"
 	toLeft = "<"
-	allnodes = getDiNodeNames(subParts) 
+	allnodes = sort(getDiNodeNames(subParts))
     nodesNum = length(allnodes)
     #println(nodesNum)
 	sg = SimpleDiGraph(nodesNum)
