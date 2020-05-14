@@ -10,8 +10,8 @@ fork = "a<f>b"
 @testset "Bayesian Network Factorization" begin
 	@test string(getFactorization(chain)[1]) == "p(a)p(b|a)p(c|b)"
 	@test string(getFactorization(chain2)[1]) == "p(a|b)p(b|c)p(c)"
-	@test string(getFactorization(collider)[1]) == "p(a)p(c|a,b)p(b)"
-	@test string(getFactorization(fork)[1]) == "p(a|f)p(f)p(b|f)"
+	@test string(getFactorization(collider)[1]) == "p(a)p(b)p(c|a,b)"
+	@test string(getFactorization(fork)[1]) == "p(a|f)p(b|f)p(f)"
 	@test getGraph(getFactorization(chain)[1]) == parseGraph(chain) 
 	@test getGraph(getFactorization(fork)[1]) == parseGraph(fork) 
 	@test getGraph(getFactorization(collider)[1]) == parseGraph(collider) 

@@ -101,12 +101,11 @@ function getVariables(names)
 	return map(x->DiscreteVar([],nothing,x),names)
 end
 
-# TODO split out getVariables(str)?
 function getFactorization(str)
 	(sg, nodeNames) = parseGraph(str)
 	variables = getVariables(nodeNames) 
 	if is_directed(sg)
-		println(string("p(",join(nodeNames,","),") ="))
+		#println(string("p(",join(nodeNames,","),") ="))
 		factors = Factorization(map(v->getBayesianFactor(sg,v,nodeNames),vertices(sg)))
 		return (factors, variables)
 	else
@@ -114,8 +113,6 @@ function getFactorization(str)
 		return (factors,variables)
 	end
 end
-
-#TODO getVariables(factoriz::Factorization)
 
 function getGraph(factoriz::Factorization)
 	return parseFactorization(string(factoriz))
