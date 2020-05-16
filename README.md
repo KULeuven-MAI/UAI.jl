@@ -18,6 +18,7 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 	P(a,f,b) =
 	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])
   ```
+- Mixed model (Chain Graph) representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b.
 
 ## Installation
 You can get [Julia 1.4 here](https://julialang.org/downloads/). 
@@ -88,14 +89,17 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 `drawFromStr("a-b-c-d-a", "plots/grid.png")`
 ![](plots/grid.png)
 
+### Markov Network - A grid with a loop 
+`drawFromStr("e<a-b-c-d>e;d-a", "plots/chainGraph.png")`
+![](plots/chainGraph.png)
+
 ## In progress Features
 
-- Mixed model representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b.
+- Displaying chain graphs is possible with my [GraphPlot fork](https://github.com/dietercastel/Graphplot.jl) ([until this PR](https://github.com/JuliaGraphs/GraphPlot.jl/pull/110))
 - Displaying matrices & vectors beautifully (useful for visualizing algorithms) 
 
 ## Wanted Features
 
-- Accessibility (for ease of education with dyslexia, colorblindness, dyspraxia, ...)
 - Tools for step-by-step probabilistic reasoning: application of definitions, Bayes rule, pushing sums down, ...
 - Soft logic gates tool
 - (Interactive?) Visualization of the simplified sum-product algorithm for non-branching graphs
@@ -103,6 +107,7 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 - Interactive and visualized probabilistic problem solving challenges.
 - SVG support for drawFromStr() (see [#1](https://github.com/KULeuven-MAI/UAI.jl/issues/1))
 - Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
+- Accessibility (for ease of education with dyslexia, colorblindness, dyspraxia, ...)
 - **\< Your suggestion here \>**
 
 ## Nice to have features

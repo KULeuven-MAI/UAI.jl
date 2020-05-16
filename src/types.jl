@@ -117,3 +117,18 @@ end
 function getGraph(factoriz::Factorization)
 	return parseFactorization(string(factoriz))
 end
+
+"""
+Gets the chain components of a graph with the given nodeNames.
+"""
+function getChainComponents(graph::SimpleDiGraph)
+	newG = SimpleDiGraph(nv(graph))
+	graphEdges = collect(edges(graph))
+	for e in edges(graph)
+		if reverse(e) in graphEdges 
+			add_edge!(newG,src(e),dst(e))		
+		end		
+	end
+	result = connected_components(newG)
+	return result
+end

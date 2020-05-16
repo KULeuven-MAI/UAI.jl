@@ -6,9 +6,9 @@ using Base.Iterators
 # Supported:
 #	- Bayesian Networks (Results in LightGraphs SimpleDiGraph)
 #	- Markov Networks (Results in LightGraphs SimpleGraph)
+#	- Chain Graphs (Results in LightGraphs SimpleDiGraph with double connected undirected edges).
+#  Todo:
 #	- Factor Graphs (Results in either)
-# TODO:
-#	- Chain Graphs
 
 
 
@@ -79,33 +79,10 @@ end
 
 directedRegex = r"<|>"
 
-#TODO finish
-function getChainComponents(subParts)
-	nodeNames = getDiNodeNames(subParts)
-	println("Directed:")	
-	println(nodeNames)
-	(g,names) = makeUndiGraph(nodeNames)
-	println(names)
-	nameDict = Dict(zip(1:nv(g),names))
-	for connVec in connected_components(g)  
-		#Chain components here:
-		println(map(x->nameDict[x],connVec))
-		println(connVec)
-	end
-	println("UnDirected:")	
-	undiNodeNames = getUndiNodeNames(subParts)
-	# dnames are the same but order can be different, account for that when merging the graphs.	
-	(dg, dnames) = makeDiGraph(undiNodeNames)
-	# Make edges in g double directed?
-	for e in edges(g)
-		add_edge!(dg, src(e),dst(e))
-		add_edge!(dg, dst(e),src(e))
-	end
-	# for debugging
-	draw(PNG("testParser.png", 16cm, 16cm), gplot(dg))
-	return (dg,dnames) 
-end
 
+"""
+Splits subParts in directed 
+"""
 function getDiNodeNames(subParts)
 	nodeNames = unique(collect(flatten(map(x->split(x,directedRegex),subParts))))
 	return nodeNames
@@ -180,7 +157,24 @@ function parseGraph(str)
 end
 
 function makeChainGraph(subParts)
-	return getChainComponents(subParts)	
+	# Make an undirected graph containing only chainComponents.
+	nodeNames = getDiNodeNames(subParts)
+	println(nodeNames)
+	(chainComponents,names) = makeUndiGraph(nodeNames)
+	println(names)
+	# Create a directed graph containing all non-chain components and edges.
+	undiNodeNames = getUndiNodeNames(subParts)
+	# dnames are the same but order can be different, account for that when merging the graphs.	
+	(result, dnames) = makeDiGraph(undiNodeNames)
+	@assert all(dnames .== names)
+	# Add double edges for each chainComponent edge.
+	for e in edges(chainComponents)
+		add_edge!(result, src(e),dst(e))
+		add_edge!(result, dst(e),src(e))
+	end
+	# for debugging
+	#draw(PNG("testParser.png", 16cm, 16cm), gplot(result))
+	return (result,dnames) 
 end
 
 function getGraphStyleFunction(str)
