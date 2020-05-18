@@ -2,11 +2,12 @@ using LightGraphs
 using UAI
 import Base.show
 
-struct DiscreteVar
+mutable struct DiscreteVar
 	domain::Array{Any}
 	assignment::Any
 	name::String
 end
+
 
 abstract type AbstractFactor end
 abstract type BayesianFactor <: AbstractFactor end
@@ -26,11 +27,6 @@ struct ConditionalFactor <: BayesianFactor
 	conditioningSet::Array{DiscreteVar}
 end
 
-struct JoinedFactor <: AbstractFactor
-	variables::Array{DiscreteVar}
-	factors::Factorization
-end
-
 struct PotentialFactor <: MarkovFactor 
 	variables::Array{DiscreteVar}
 end
@@ -43,13 +39,39 @@ function phi(str)
 	return string("ϕ(",str,")")
 end
 
-
 Base.show(io::IO, v::DiscreteVar) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
 Base.show(io::IO, v::MarginalFactor) = print(io,p(v.variable)) 
-Base.show(io::IO, v::JoinedFactor) = print(io,p(join(v.variables,",")))
 Base.show(io::IO, v::ConditionalFactor) = print(io,p(string(v.variable,"|",join(v.conditioningSet,","))))
 Base.show(io::IO, v::PotentialFactor) = print(io,phi(join(v.variables,",")))
 Base.show(io::IO, v::Factorization) = print(io,join(v.factors))
+
+mutable struct JPD
+	factorization::Factorization
+	variables::Array{DiscreteVar}
+	domains::Dict{Symbol,Array{Any,1}}	
+	function JPD(str::String) 
+		#new(getFactorization(str)...,Pair{Symbol,Array{Any,1}}[])
+		fact, vars = getFactorization(str)
+		domains = Dict(map(x->(Symbol(x.name),[]), vars)) 
+		new(fact, vars, domains)
+	end
+end
+
+#= function setAllDomains(facz:Factorization,domain) =#
+#= 	for f in facz.factors =#
+#= 	end =#
+#= end =#
+
+function setAllDomains!(jpd::JPD,domain)
+	for (k,v) in jpd.domains
+		jpd.domains[k] = domain
+	end
+	#= setAllDomains(jpd.factorization,domain) =#
+end
+
+function setDomain!(jpd::JPD,var::Symbol,domain)
+	jpd.domains[var] = domain
+end
 
 function assign(v::DiscreteVar, value)
 	if value in v.domain
@@ -71,8 +93,8 @@ function hasDomain(v::DiscreteVar)
 	return !isempty(v.domain)
 end
 
-function setDomain(v::DiscreteVar, domain)
-	return DiscreteVar(domain,v.assignment,v.name)  
+function setDomain!(v::DiscreteVar, domain)
+	v.domain = domain
 end
 
 function getDomain(v::DiscreteVar)

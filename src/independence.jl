@@ -1,3 +1,5 @@
+using UAI
+idpSym = '⫫'
 
 #idp holds if 
 #P(a,b) = p(a)*p(b) for all values in domA, domB

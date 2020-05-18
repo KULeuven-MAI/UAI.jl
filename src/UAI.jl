@@ -24,6 +24,7 @@ module UAI
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
 	export getFactorization, getFactor, getGraph
 	export getChainComponents
+	export JPD, setAllDomains!, setDomain!
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
