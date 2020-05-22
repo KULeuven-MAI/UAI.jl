@@ -4,7 +4,7 @@ using UAI
 using Test
 
 #tests = ["independence", "normalization"]
-tests = ["types","normalization","parser","visualizer"]
+tests = ["types","normalization","parser","visualizer","independence"]
 for t in tests
 	include("$(t).jl")
 end

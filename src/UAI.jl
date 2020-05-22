@@ -11,7 +11,7 @@ module UAI
 	export isCondNorm, condNormalize, margOver, marginal, conditional, oneComplement
 
 	include("independence.jl")
-	export idpValue
+	export idpValue, disorient!,getAllAncestors,marryAll!,disorient!,moralize!,isGraphIdp
 
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization
