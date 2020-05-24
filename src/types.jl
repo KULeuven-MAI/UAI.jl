@@ -2,11 +2,15 @@ using LightGraphs
 using UAI
 import Base.show
 
-mutable struct DiscreteVar
-	domain::Array{Any}
-	assignment::Any
-	name::String
-end
+
+const Var = Symbol
+
+#= mutable struct DiscreteVar =#
+#= 	domain::Array{Any} =#
+#= 	assignment::Any =#
+#= 	name::String =#
+#= end =#
+#Base.show(io::IO, v::Var) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
 
 
 abstract type AbstractFactor end
@@ -19,16 +23,16 @@ struct Factorization
 end
 
 struct MarginalFactor <: BayesianFactor 
-	variable::DiscreteVar
+	variable::Var
 end
 
 struct ConditionalFactor <: BayesianFactor 
-	variable::DiscreteVar
-	conditioningSet::Array{DiscreteVar}
+	variable::Var
+	conditioningSet::Array{Var}
 end
 
 struct PotentialFactor <: MarkovFactor 
-	variables::Array{DiscreteVar}
+	variables::Array{Var}
 end
 
 function p(str)
@@ -39,7 +43,6 @@ function phi(str)
 	return string("ϕ(",str,")")
 end
 
-Base.show(io::IO, v::DiscreteVar) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
 Base.show(io::IO, v::MarginalFactor) = print(io,p(v.variable)) 
 Base.show(io::IO, v::ConditionalFactor) = print(io,p(string(v.variable,"|",join(v.conditioningSet,","))))
 Base.show(io::IO, v::PotentialFactor) = print(io,phi(join(v.variables,",")))
@@ -47,20 +50,17 @@ Base.show(io::IO, v::Factorization) = print(io,join(v.factors))
 
 mutable struct JPD
 	factorization::Factorization
-	variables::Array{DiscreteVar}
+	variables::Array{Var}
 	domains::Dict{Symbol,Array{Any,1}}	
+	probTables::Dict{AbstractFactor,Array{Any,1}} #where T<:Real
 	function JPD(str::String) 
 		#new(getFactorization(str)...,Pair{Symbol,Array{Any,1}}[])
 		fact, vars = getFactorization(str)
-		domains = Dict(map(x->(Symbol(x.name),[]), vars)) 
-		new(fact, vars, domains)
+		domains = Dict(map(x->(Var(x),[]), vars)) 
+		tables = Dict(map(f->(f,Real[]),fact.factors))
+		new(fact, vars, domains, tables)
 	end
 end
-
-#= function setAllDomains(facz:Factorization,domain) =#
-#= 	for f in facz.factors =#
-#= 	end =#
-#= end =#
 
 function setAllDomains!(jpd::JPD,domain)
 	for (k,v) in jpd.domains
@@ -73,31 +73,67 @@ function setDomain!(jpd::JPD,var::Symbol,domain)
 	jpd.domains[var] = domain
 end
 
-function assign(v::DiscreteVar, value)
+function getFactor(jpd, query::Var)
+	getFactor(jpd,query,Var[])
+end
+
+function getFactor(jpd, query::Var, evidenceSet::Array{Var})
+	marginal = false
+	if evidenceSet == [] 
+		marginal = true	
+	end
+	for f in jpd.factorization.factors
+		if marginal && typeof(f) == MarginalFactor
+			if query == f.variable 
+				return f
+			end
+		else
+			if typeof(f) == ConditionalFactor
+				if query == f.variable && all(map(e-> e in f.conditioningSet,evidenceSet))
+					return f
+				end
+			end
+		end
+	end
+end
+
+function assignTable!(jpd,query,table)
+	f = getFactor(jpd,query,Var[])
+	jpd.probTables[f] = table 
+end
+
+function assignTable!(jpd,query,evidenceSet,table)
+	f = getFactor(jpd,query,evidenceSet)
+	jpd.probTables[f] = table 
+end
+
+function assign(v::Var, value)
+	#TODO
+	throws(error("UNiplemented"))
 	if value in v.domain
-		return DiscreteVar(v.domain, value, v.name)
+		return Var(v.domain, value, v.name)
 	else
 		throws(error("A variable can only be assigned a value in it's domain."))
 	end
 end
 
-function getName(v::DiscreteVar)
+function getName(v::Var)
 	return v.name
 end
 
-function hasAssignment(v::DiscreteVar)
+function hasAssignment(v::Var)
 	return !isnothing(v.assignment)
 end
 
-function hasDomain(v::DiscreteVar)
+function hasDomain(v::Var)
 	return !isempty(v.domain)
 end
 
-function setDomain!(v::DiscreteVar, domain)
+function setDomain!(v::Var, domain)
 	v.domain = domain
 end
 
-function getDomain(v::DiscreteVar)
+function getDomain(v::Var)
 	return v.domain
 end
 
@@ -107,20 +143,20 @@ end
 function getBayesianFactor(graph,vertex,names)::AbstractFactor
 	inneighbors = LightGraphs.inneighbors(graph,vertex)
 	if isempty(inneighbors)
-		return MarginalFactor(DiscreteVar([],nothing,names[vertex]))
+		return MarginalFactor(Var(names[vertex]))
 	else
-		nbrs = map(x->DiscreteVar([],nothing,names[x]),inneighbors)
-		return ConditionalFactor(DiscreteVar([],nothing,names[vertex]),nbrs)
+		nbrs = map(x->Var(names[x]),inneighbors)
+		return ConditionalFactor(Var(names[vertex]),nbrs)
 	end
 end
 
 function getPotentialFactor(graph,clique,names)
-	vars = map(x->DiscreteVar([],nothing,names[x]), sort(clique))
+	vars = map(x->Var(names[x]), sort(clique))
 	return PotentialFactor(vars)	
 end
 
 function getVariables(names)
-	return map(x->DiscreteVar([],nothing,x),names)
+	return map(x->Var(x),names)
 end
 
 function getFactorization(str)

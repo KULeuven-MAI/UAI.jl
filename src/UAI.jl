@@ -11,7 +11,7 @@ module UAI
 	export isCondNorm, condNormalize, margOver, marginal, conditional, oneComplement
 
 	include("independence.jl")
-	export idpValue, disorient!,getAllAncestors,marryAll!,disorient!,moralize!,isGraphIdp
+	export idpValue,getAllAncestors,getAllDescendants,marryAll!,disorient,disorient!,moralize,moralize!,isGraphIdp
 
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization
@@ -24,7 +24,8 @@ module UAI
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
 	export getFactorization, getFactor, getGraph
 	export getChainComponents
-	export JPD, setAllDomains!, setDomain!
+	export JPD, setAllDomains!, setDomain!, assignTable!
+	export Var, getFactor
 
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
