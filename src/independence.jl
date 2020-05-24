@@ -32,12 +32,6 @@ function idpValue(jpd,idx)
 end
 
 
-"""
-Returns all ancestors of a list of nodes in a non-cyclic graph.
-"""
-function getAllAncestors(g::DiGraph, nodes::Array{T}) where T<:Integer
-	return unique(vcat(map(n->getAllAncestors(g,n),nodes)...))
-end
 
 
 """
@@ -51,7 +45,31 @@ function getAllAncestors(g::DiGraph, node::Integer)
 end
 
 """
-Addes bi-directional edges between all given nodes.
+Returns all ancestors of a list of nodes in a non-cyclic graph.
+"""
+function getAllAncestors(g::DiGraph, nodes::Array{T}) where T<:Integer
+	return unique(vcat(map(n->getAllAncestors(g,n),nodes)...))
+end
+
+"""
+Returns all descendants of a node in a non-cyclic graph.
+"""
+function getAllDescendants(g::DiGraph, node::Integer)
+	@assert is_cyclic(g) == false
+	outnb = outneighbors(g,node) 
+	all = vcat(outnb, map(x->getAllDescendants(g,x),outnb)...)
+	return unique(all)
+end
+
+"""
+Returns all descendants of a list of nodes in a non-cyclic graph.
+"""
+function getAllDescendants(g::DiGraph, nodes::Array{T}) where T<:Integer
+	return unique(vcat(map(n->getAllDescendants(g,n),nodes)...))
+end
+
+"""
+Addes bi-directional edges between all given nodes in place.
 """
 function marryAll!(g::DiGraph,nodes::Array)
 	cartProduct = Iterators.product(nodes,nodes)
@@ -63,7 +81,17 @@ function marryAll!(g::DiGraph,nodes::Array)
 end
 
 """
-Doubles each directed edge of a directed graph.
+Returns a new graph with bi-directional edges between all given nodes.
+"""
+function marryAll(g::DiGraph,nodes::Array)
+	newG = deepcopy(g)
+	marryAll!(newG,nodes)
+	return newG
+end
+
+
+"""
+Doubles each directed edge of a directed graph in place.
 """
 function disorient!(g)
 	for e in edges(g)
@@ -72,12 +100,30 @@ function disorient!(g)
 end
 
 """
-Marries all the direct parents of each node.
+Doubles each directed edge of a directed graph.
+"""
+function disorient(g)
+	newG = deepcopy(g)
+	disorient!(newG)
+	return newG
+end
+
+"""
+Marries all the direct parents of each node in place.
 """
 function moralize!(g::DiGraph)
 	for v in vertices(g)
 		marryAll!(g,inneighbors(g,v))
 	end
+end
+
+"""
+Marries all the direct parents of each node.
+"""
+function moralize(g::DiGraph)
+	newG = deepcopy(g)
+	moralize!(newG)
+	return newG
 end
 
 
