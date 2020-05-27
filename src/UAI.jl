@@ -27,6 +27,10 @@ module UAI
 	export JPD, setAllDomains!, setDomain!, assignTable!
 	export Var, getFactor
 
+	include("macros.jl")
+	export @p, @q, @query
+
+
 # TODO:
 # Make data structure for conditional, marginal prob, JPD, ...
 # Use DataFrames for datasets

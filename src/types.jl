@@ -73,11 +73,15 @@ function setDomain!(jpd::JPD,var::Symbol,domain)
 	jpd.domains[var] = domain
 end
 
+function getDomain(jpd::JPD,var::Symbol)
+	return jpd.domains[var]
+end
+
 function getFactor(jpd, query::Var)
 	getFactor(jpd,query,Var[])
 end
 
-function getFactor(jpd, query::Var, evidenceSet::Array{Var})
+function getFactor(jpd::JPD, query::Var, evidenceSet::Array{Var})
 	marginal = false
 	if evidenceSet == [] 
 		marginal = true	
@@ -99,11 +103,16 @@ end
 
 function assignTable!(jpd,query,table)
 	f = getFactor(jpd,query,Var[])
+	domain = jpd.domains[query]
+	if length(domain) !== length(table)
+		throws(error("table length must match domain $domain"))
+	end
 	jpd.probTables[f] = table 
 end
 
 function assignTable!(jpd,query,evidenceSet,table)
 	f = getFactor(jpd,query,evidenceSet)
+	sizes = size(table)
 	jpd.probTables[f] = table 
 end
 
