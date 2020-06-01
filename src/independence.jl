@@ -1,7 +1,9 @@
 using UAI
 using LightGraphs
 using Base.Iterators
+using GraphPlot
 idpSym = '⫫'
+notIdpSym = "⫫\u20E5"
 
 # independence a ⫫ b holds if 
 #P(a,b) = p(a)*p(b) for all values in domA, domB
@@ -127,7 +129,9 @@ function moralize(g::DiGraph)
 end
 
 
-function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int; givens::Array{T,1}=Int[]) where T <: Integer
+function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
+										givens::Array{T,1}=Int[],
+										nodeNames = collect(1:nv(g))) where T <: Integer
 	# make a copy
 	newG = deepcopy(g) 
 	startNodes = vcat([firstVertex, secondVertex],givens...)
@@ -136,20 +140,36 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int; givens::Arr
 	allNodes = unique(vcat(startNodes,ancestors))
 	println(allNodes)
 	# remove non relevant nodes from copy newG
+
+	toDelete = [ !(x in allNodes) for x in vertices(g)]
+	remainingNodes = deleteat!(deepcopy(nodeNames),toDelete)
+	newIdx(i) = findfirst(x->x==i, deleteat!(collect(vertices(g)),toDelete))
+	#println(remainingNodes)
+
+	numOfRemovals = 0
 	for v in vertices(g)
 		if !(v in allNodes)
-			rem_vertex!(newG,v)
+			#println("RMING $v")
+			rem_vertex!(newG,v-numOfRemovals)
+			numOfRemovals += 1
 		end
 	end
 
+	plot2FileCG(newG,remainingNodes,"relevant.png")
+
 	# 2) Moralize 
 	moralize!(newG)
+
+	plot2FileCG(newG,remainingNodes,"moralized.png")
 	# 3) Disorient
 	disorient!(newG)
+	plot2FileCG(newG,remainingNodes,"disoriented.png")
 
 	# 4) remove the elements in the condition set 
 	# 5) first & second are graph-idp if NOT connected
-	return !has_path(g,firstVertex, secondVertex, exclude_vertices=givens)
+	excluded = map(x->newIdx(x),givens)
+	#println(excluded)
+	return !has_path(newG,newIdx(firstVertex), newIdx(secondVertex), exclude_vertices=excluded)
 end
 
 function isGraphIdp(graphToParse::String, firstName::String, secondName::String; givens::Array{String,1}=String[])
@@ -161,5 +181,8 @@ function isGraphIdp(graphToParse::String, firstName::String, secondName::String;
 	println(firstVertex)
 	println(secondVertex)
 	println(idGivens)
-	return isGraphIdp(g,firstVertex,secondVertex,givens=idGivens)
+	isGidp = isGraphIdp(g,firstVertex,secondVertex,givens=idGivens,nodeNames=n)
+	resSymbol = isGidp ? idpSym : notIdpSym
+	println("$firstName $resSymbol $secondName | ", join(givens, ","))
+	return isGidp
 end

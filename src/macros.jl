@@ -58,10 +58,11 @@ end
 
 macro gidp(graphString, firstVar, queryExpr)
 	local (query,evidence) = parseQuery(queryExpr)
+	local ref = esc(quote $graphString end)
 	local fV = QuoteNode(firstVar)
 	local qN = QuoteNode(query[1]) 
 	local eN = QuoteNode(evidence)
 	return quote 
-		isGraphIdp($graphString, string($fV), string($qN),givens=map(x->string(x),$eN))
+		isGraphIdp($ref, string($fV), string($qN),givens=convert(Array{String},map(x->string(x),$eN)))
 	end
 end

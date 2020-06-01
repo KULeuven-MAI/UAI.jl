@@ -240,3 +240,8 @@ function drawFromStr(str, filename)
 	#println("test2")
     plot2File(sg, nodes, filename)
 end
+
+function plot2FileCG(graph, nodeNames, filename)
+	plot = gplot(graph,nodelabel=nodeNames,chainGraph=true,arrowlengthfrac=0.2)
+	draw(PNG(filename, 18cm, 9cm), plot)
+end

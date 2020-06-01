@@ -36,9 +36,22 @@ end
 	@test all([i in getAllAncestors(g,[1,3,4]) for i in allAnc])
 end
 
+mitGraphStr = "a>c<b; d<c>e ; d>f>g"
+
 @testset "d-seperation MIT example" begin
 # from http://web.mit.edu/jmn/www/6.034/d-separation.pdf 
-	(originalGraph,names) = parseGraph("a>c<b;d<c>e;d>f>g")	
+	(originalGraph,names) = parseGraph(mitGraphStr)	
 	@test isGraphIdp(originalGraph,1,2,givens=[2]) == true
-	@test isGraphIdp(originalGraph,1,2,givens=[3]) == true
+	@test isGraphIdp(originalGraph,1,2,givens=[3]) == false 
+	@test (@gidp mitGraphStr a b|d,f) == false # 1 
+	@test (@gidp mitGraphStr a b|a) == true # 2 
+	@test (@gidp mitGraphStr b a|b) == true # 2'
+	@test (@gidp mitGraphStr a b) == true  # 2''
+	@test (@gidp mitGraphStr a b|c) == false# 3  
+	@test (@gidp mitGraphStr d e|c) == true # 4  
+	@test (@gidp mitGraphStr d e) == false # 5 
+	@test (@gidp mitGraphStr d e|a,b) == false # 6
+	# first part of 7 is 4
+	@test (@gidp mitGraphStr d g|c) == false# 7'
 end
+
