@@ -77,7 +77,7 @@ function marryAll!(g::DiGraph,nodes::Array)
 	cartProduct = Iterators.product(nodes,nodes)
 	filtered = Iterators.filter(x-> x[1] !== x[2],cartProduct)
 	for (src,dst) in filtered
-		println("adding $src, $dst")
+		#println("adding $src, $dst")
 		add_edge!(g,src,dst)
 	end
 end
@@ -138,7 +138,7 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 	# 1) Get all the ancestors
 	ancestors = getAllAncestors(g,startNodes)
 	allNodes = unique(vcat(startNodes,ancestors))
-	println(allNodes)
+	#println(allNodes)
 	# remove non relevant nodes from copy newG
 
 	toDelete = [ !(x in allNodes) for x in vertices(g)]
@@ -177,10 +177,10 @@ function isGraphIdp(graphToParse::String, firstName::String, secondName::String;
 	firstVertex = getNodeId(firstName,n)
 	secondVertex = getNodeId(secondName,n)
 	idGivens = isempty(givens) ? Int[] : map(x->getNodeId(x,n),givens)
-	println(g)
-	println(firstVertex)
-	println(secondVertex)
-	println(idGivens)
+	#= println(g) =#
+	#= println(firstVertex) =#
+	#= println(secondVertex) =#
+	#= println(idGivens) =#
 	isGidp = isGraphIdp(g,firstVertex,secondVertex,givens=idGivens,nodeNames=n)
 	resSymbol = isGidp ? idpSym : notIdpSym
 	println("$firstName $resSymbol $secondName | ", join(givens, ","))

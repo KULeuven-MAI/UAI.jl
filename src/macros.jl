@@ -9,7 +9,7 @@ end
 function parseQuery(expr::Expr)
 	query = Symbol[]
 	evidence = Symbol[]
-	dump(expr)
+	#dump(expr)
 	exprIdx = findfirst(x->typeof(x)===Expr,expr.args)
 	if exprIdx == nothing
 		barIdx = findfirst(x->x===:|,expr.args)
@@ -22,7 +22,7 @@ function parseQuery(expr::Expr)
 		end
 	else
 		idx = exprIdx
-		println(idx)
+		#println(idx)
 		idx == 1 ? nothing : append!(query,expr.args[1:idx-1]) 
 		push!(query,expr.args[idx].args[2])
 		push!(evidence,expr.args[idx].args[3])
