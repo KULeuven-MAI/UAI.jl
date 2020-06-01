@@ -21,4 +21,6 @@ cond4P = ([:b,:a],[:c])
 	@test cond2[1] == cond2P[1]
 	@test cond3 == cond3P
 	@test cond4 == cond4P
+	@test (@query a,b|c,d,e) == (@q a,b|c,d,e)
+	@test (@q b,a) == joinedP
 end

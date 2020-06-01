@@ -42,7 +42,6 @@ macro p(jpd, queryExpr)
 	end
 end
 
-#TODO: marginal case
 macro query(queryExpr)
 	local (query,evidence) = parseQuery(queryExpr)
 	local qN = QuoteNode(query) 
@@ -52,6 +51,7 @@ macro query(queryExpr)
 	end
 end
 
-#= macro q(queryExpr) =#
-#= 	return :(@query $(esc(queryExpr))) =#
-#= end =#
+# shorthand for queries.
+macro q(queryExpr)
+	return :(@query $(queryExpr))
+end
