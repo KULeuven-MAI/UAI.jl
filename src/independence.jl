@@ -127,20 +127,39 @@ function moralize(g::DiGraph)
 end
 
 
-function isGraphIdp(g, firstVertex, secondVertex; givens=[])
+function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int; givens::Array{T,1}=Int[]) where T <: Integer
+	# make a copy
 	newG = deepcopy(g) 
 	startNodes = vcat([firstVertex, secondVertex],givens...)
+	# 1) Get all the ancestors
 	ancestors = getAllAncestors(g,startNodes)
 	allNodes = unique(vcat(startNodes,ancestors))
 	println(allNodes)
+	# remove non relevant nodes from copy newG
 	for v in vertices(g)
 		if !(v in allNodes)
 			rem_vertex!(newG,v)
 		end
 	end
 
+	# 2) Moralize 
 	moralize!(newG)
+	# 3) Disorient
 	disorient!(newG)
 
+	# 4) remove the elements in the condition set 
+	# 5) first & second are graph-idp if NOT connected
 	return !has_path(g,firstVertex, secondVertex, exclude_vertices=givens)
+end
+
+function isGraphIdp(graphToParse::String, firstName::String, secondName::String; givens::Array{String,1}=String[])
+	(g,n) = parseGraph(graphToParse)
+	firstVertex = getNodeId(firstName,n)
+	secondVertex = getNodeId(secondName,n)
+	idGivens = isempty(givens) ? Int[] : map(x->getNodeId(x,n),givens)
+	println(g)
+	println(firstVertex)
+	println(secondVertex)
+	println(idGivens)
+	return isGraphIdp(g,firstVertex,secondVertex,givens=idGivens)
 end

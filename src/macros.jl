@@ -55,3 +55,13 @@ end
 macro q(queryExpr)
 	return :(@query $(queryExpr))
 end
+
+macro gidp(graphString, firstVar, queryExpr)
+	local (query,evidence) = parseQuery(queryExpr)
+	local fV = QuoteNode(firstVar)
+	local qN = QuoteNode(query[1]) 
+	local eN = QuoteNode(evidence)
+	return quote 
+		isGraphIdp($graphString, string($fV), string($qN),givens=map(x->string(x),$eN))
+	end
+end

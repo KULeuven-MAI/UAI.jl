@@ -28,7 +28,7 @@ module UAI
 	export Var, getFactor
 
 	include("macros.jl")
-	export @p, @q, @query
+	export @p, @q, @query, @gidp
 
 
 # TODO:
