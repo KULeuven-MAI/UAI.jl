@@ -19,6 +19,15 @@ This is a Julia library accompanying the KUL course Uncertainty in Artificial In
 	(P(a|f)P(f)P(b|f), DiscreteVar[a, f, b])
   ```
 - Mixed model (Chain Graph) representations e.g. `a-b-c; e<b>d` is a mixed model with a fork extending from b.
+- Testing for graphical independence in Bayesian networks (D-seperation)
+```Julia
+julia> @gidp "a<c>b" a b|c
+a ⫫ b | c
+true
+julia> @gidp "a>c<b" a b|c
+a ⫫⃥ b | c
+false
+```
 
 ## Installation
 You can get [Julia 1.4 here](https://julialang.org/downloads/). 
