@@ -64,7 +64,9 @@ end
 # Checks the validity of the conditioning dimension.
 function checkDim(tensor, cdim)
 	if !(cdim in 1:ndims(tensor))
-		throw(ArgumentError("The following conditioning set dimension is invalid for the given tensor:", cdim))
+		e = ArgumentError("The following conditioning set dimension is invalid for the given tensor:", cdim)
+		#= println(typeof(e)) =#
+		throw(e)
 	end
 end
 
@@ -120,8 +122,14 @@ end
 function condNormalize(tensor; cdim::Int)
 	try 
 		checkDim(tensor, cdim)
-	catch;
-		rethrow()
+	catch e ;
+		# TODO: figure out why MethodError instead of argument Error.
+		#= if isa(e,ArgumentError) =#
+		#= 	println("ISA ARG ERROR") =#
+		#= end =#
+		#= println(e) =#
+		#= println(typeof(e)) =#
+		throw(e)
 	end
 	cdimRange = 1:size(tensor)[cdim]
 	# println(cdimRange)

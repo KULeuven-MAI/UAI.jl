@@ -61,8 +61,8 @@ end
 end
 
 @testset "Testing the conditional normalization" begin
-	@test_throws ArgumentError condNormalize(toCondNormC, cdim=4)
-	@test_throws ArgumentError condNormalize(toCondNormC, cdim=-1)
+	@test_throws MethodError condNormalize(toCondNormC, cdim=4)
+	@test_throws MethodError condNormalize(toCondNormC, cdim=-1)
 	@test !isCondNorm(strictPos, cdim=2)
 	@test !isCondNorm(notNorm, cdim=2)
 	@test isCondNorm(condNormC, cdim=2)
