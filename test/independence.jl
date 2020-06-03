@@ -41,8 +41,8 @@ mitGraphStr = "a>c<b; d<c>e ; d>f>g"
 @testset "d-seperation MIT example" begin
 # from http://web.mit.edu/jmn/www/6.034/d-separation.pdf 
 	(originalGraph,names) = parseGraph(mitGraphStr)	
-	@test isGraphIdp(originalGraph,1,2,givens=[2]) == true
-	@test isGraphIdp(originalGraph,1,2,givens=[3]) == false 
+	@test isGraphIdp(originalGraph,1,2,condSet=[2]) == true
+	@test isGraphIdp(originalGraph,1,2,condSet=[3]) == false 
 	@test (@gidp mitGraphStr a b|d,f) == false # 1 
 	@test (@gidp mitGraphStr a b|a) == true # 2 
 	@test (@gidp mitGraphStr b a|b) == true # 2'

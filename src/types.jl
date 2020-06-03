@@ -81,9 +81,9 @@ function getFactor(jpd, query::Var)
 	getFactor(jpd,query,Var[])
 end
 
-function getFactor(jpd::JPD, query::Var, evidenceSet::Array{Var})
+function getFactor(jpd::JPD, query::Var, condSet::Array{Var})
 	marginal = false
-	if evidenceSet == [] 
+	if condSet == [] 
 		marginal = true	
 	end
 	for f in jpd.factorization.factors
@@ -93,7 +93,7 @@ function getFactor(jpd::JPD, query::Var, evidenceSet::Array{Var})
 			end
 		else
 			if typeof(f) == ConditionalFactor
-				if query == f.variable && all(map(e-> e in f.conditioningSet,evidenceSet))
+				if query == f.variable && all(map(e-> e in f.conditioningSet,condSet))
 					return f
 				end
 			end
@@ -110,8 +110,8 @@ function assignTable!(jpd,query,table)
 	jpd.probTables[f] = table 
 end
 
-function assignTable!(jpd,query,evidenceSet,table)
-	f = getFactor(jpd,query,evidenceSet)
+function assignTable!(jpd,query,condSet,table)
+	f = getFactor(jpd,query,condSet)
 	sizes = size(table)
 	jpd.probTables[f] = table 
 end

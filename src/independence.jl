@@ -130,12 +130,12 @@ end
 
 
 function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
-										givens::Array{T,1}=Int[],
+										condSet::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
 	plot2FileCG(g,nodeNames,joinpath("plots","original.png"))
 	# make a copy
 	newG = deepcopy(g) 
-	startNodes = vcat([firstVertex, secondVertex],givens...)
+	startNodes = vcat([firstVertex, secondVertex],condSet...)
 	# 1) Get all the ancestors
 	ancestors = getAllAncestors(g,startNodes)
 	allNodes = unique(vcat(startNodes,ancestors))
@@ -168,22 +168,22 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 
 	# 4) remove the elements in the condition set 
 	# 5) first & second are graph-idp if NOT connected
-	excluded = map(x->newIdx(x),givens)
+	excluded = map(x->newIdx(x),condSet)
 	#println(excluded)
 	return !has_path(newG,newIdx(firstVertex), newIdx(secondVertex), exclude_vertices=excluded)
 end
 
-function isGraphIdp(graphToParse::String, firstName::String, secondName::String; givens::Array{String,1}=String[])
+function isGraphIdp(graphToParse::String, firstName::String, secondName::String; condSet::Array{String,1}=String[])
 	(g,n) = parseGraph(graphToParse)
 	firstVertex = getNodeId(firstName,n)
 	secondVertex = getNodeId(secondName,n)
-	idGivens = isempty(givens) ? Int[] : map(x->getNodeId(x,n),givens)
+	idcondSet = isempty(condSet) ? Int[] : map(x->getNodeId(x,n),condSet)
 	#= println(g) =#
 	#= println(firstVertex) =#
 	#= println(secondVertex) =#
-	#= println(idGivens) =#
-	isGidp = isGraphIdp(g,firstVertex,secondVertex,givens=idGivens,nodeNames=n)
+	#= println(idcondSet) =#
+	isGidp = isGraphIdp(g,firstVertex,secondVertex,condSet=idcondSet,nodeNames=n)
 	resSymbol = isGidp ? idpSym : notIdpSym
-	println("$firstName $resSymbol $secondName | ", join(givens, ","))
+	println("$firstName $resSymbol $secondName | ", join(condSet, ","))
 	return isGidp
 end
