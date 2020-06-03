@@ -245,3 +245,10 @@ function plot2FileCG(graph, nodeNames, filename)
 	plot = gplot(graph,nodelabel=nodeNames,chainGraph=true,arrowlengthfrac=0.2)
 	draw(PNG(filename, 18cm, 9cm), plot)
 end
+
+# Animation needs for block, refactoring required.
+#= function plot2gif(graph,nodeNames,title) =#
+#= 	Plots.plot!(graph,nodelabel=nodeNames,curves=false,nodeshape=:circle,title=title) =#
+#= end =#
+#
+#

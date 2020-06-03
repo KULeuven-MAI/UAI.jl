@@ -132,6 +132,7 @@ end
 function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 										givens::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
+	plot2FileCG(g,nodeNames,joinpath("plots","original.png"))
 	# make a copy
 	newG = deepcopy(g) 
 	startNodes = vcat([firstVertex, secondVertex],givens...)
@@ -155,15 +156,15 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 		end
 	end
 
-	plot2FileCG(newG,remainingNodes,"relevant.png")
+	plot2FileCG(newG,remainingNodes,joinpath("plots","relevant.png"))
 
 	# 2) Moralize 
 	moralize!(newG)
 
-	plot2FileCG(newG,remainingNodes,"moralized.png")
+	plot2FileCG(newG,remainingNodes,joinpath("plots","moralized.png"))
 	# 3) Disorient
 	disorient!(newG)
-	plot2FileCG(newG,remainingNodes,"disoriented.png")
+	plot2FileCG(newG,remainingNodes,joinpath("plots","disoriented.png"))
 
 	# 4) remove the elements in the condition set 
 	# 5) first & second are graph-idp if NOT connected
