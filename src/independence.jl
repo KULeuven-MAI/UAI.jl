@@ -2,6 +2,7 @@ using UAI
 using LightGraphs
 using Base.Iterators
 using GraphPlot
+using Combinatorics
 idpSym = '⫫'
 notIdpSym = "⫫\u20E5"
 
@@ -135,6 +136,13 @@ function isSeparated(g::AbstractGraph, firstVertex::Int, secondVertex::Int; cond
 	return !has_path(g, firstVertex, secondVertex, exclude_vertices=condSet)
 end
 
+function isGraphIdp(g::AbstractGraph, tuple::Tuple)
+	fv = tuple[1]
+	sv = tuple[2]
+	cs = length(tuple) >2 ? collect(tuple[3:end]) : Int[]
+	return isGraphIdp(g, fv, sv, condSet=cs)
+end
+
 function isGraphIdp(g::Graph, firstVertex::Int, secondVertex::Int;
 										condSet::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
@@ -209,4 +217,70 @@ function isGraphIdp(graphToParse::String, firstName::String, secondName::String;
 	resSymbol = isGidp ? idpSym : notIdpSym
 	println("$firstName $resSymbol $secondName | ", join(condSet, ","))
 	return isGidp
+end
+
+function mapAll(fn::Function, x)
+	return Tuple(map(fn, [x...]))
+end
+
+function mapAllNames(arr, nodeNames)
+	map(x->mapAll(n->nodeNames[n],x), arr)
+end
+
+# Generates a list of all 3-tuples that can be queried for a (conditional) independence statement
+function getIdpCandidates(g)
+	allv = 1:nv(g)
+	pairs = collect(combinations(allv,2))
+	result = Tuple[]
+	for p in pairs
+		push!(result,Tuple(p))
+		for c in filter(x->!(x in p),allv)
+			push!(result,(p[1],p[2],c))
+		end
+	end
+	return result
+end
+
+function formatIdpStatement(t)
+	startStr = string(t[1],idpSym,t[2])
+	if length(t) > 2
+		return string(startStr,"|",join(t[3:end],","))
+	else
+		return startStr
+	end
+end
+
+function formatDepStatement(t)
+	startStr = string(t[1],notIdpSym,t[2])
+	if length(t) > 2
+		return string(startStr,"|",join(t[3:end],","))
+	else
+		return startStr
+	end
+end
+
+function getIdpStatements(graphString::String)
+	(g,n)	= parseGraph(graphString)
+	Lg = getIdpStatements(g)
+	namedLg = mapAllNames(Lg,n)
+	formatedLg = map(x->formatIdpStatement(x),namedLg)
+	return formatedLg 
+end
+
+function getIdpStatements(g)
+	 cand = getIdpCandidates(g)
+	 f = filter(x->isGraphIdp(g,x),cand)
+end
+
+function getDepStatements(g)
+	 cand = getIdpCandidates(g)
+	 f = filter(x->!isGraphIdp(g,x),cand)
+end
+
+function getDepStatements(graphString::String)
+	(g,n)	= parseGraph(graphString)
+	Lg = getDepStatements(g)
+	namedLg = mapAllNames(Lg,n)
+	formatedLg = map(x->formatDepStatement(x),namedLg)
+	return formatedLg 
 end
