@@ -153,7 +153,7 @@ version = "2.59.0+2"
 
 [[GraphPlot]]
 deps = ["ArnoldiMethod", "ColorTypes", "Colors", "Compose", "DelimitedFiles", "LightGraphs", "LinearAlgebra", "Random", "SparseArrays"]
-git-tree-sha1 = "f61362994798b992153e58e733613d8a7193e42d"
+git-tree-sha1 = "87ebc6eeed49ea12763d4adbd52011ba8ae1784b"
 repo-rev = "chainGraph"
 repo-url = "https://github.com/dietercastel/GraphPlot.jl"
 uuid = "a2cc645c-3eea-5389-862e-a155d0052231"

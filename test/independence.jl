@@ -36,10 +36,10 @@ end
 	@test all([i in getAllAncestors(g,[1,3,4]) for i in allAnc])
 end
 
-mitGraphStr = "a>c<b; d<c>e ; d>f>g"
 
 @testset "d-seperation MIT example" begin
 # from http://web.mit.edu/jmn/www/6.034/d-separation.pdf 
+	mitGraphStr = "a>c<b; d<c>e ; d>f>g"
 	(originalGraph,names) = parseGraph(mitGraphStr)	
 	@test isGraphIdp(originalGraph,1,2,condSet=[2]) == true
 	@test isGraphIdp(originalGraph,1,2,condSet=[3]) == false 
@@ -55,3 +55,20 @@ mitGraphStr = "a>c<b; d<c>e ; d>f>g"
 	@test (@gidp mitGraphStr d g|c) == false# 7'
 end
 
+
+@testset "Exc 3.2.2 Markov Net" begin
+	markovNet = "a-b-d-a; a-c"
+	(markovGraph,names) = parseGraph(markovNet)	
+	@test (@gidp markovNet a b|d) == false
+	@test isGraphIdp(markovGraph,1,2,condSet=[4]) == false # non-macro test.
+	@test (@gidp markovNet b a|d) == false # commutative test
+	@test (@gidp markovNet a b|c) == false
+	@test (@gidp markovNet b a|c) == false # commutative test
+	@test (@gidp markovNet a d|b) == false
+	@test (@gidp markovNet a d|c) == false
+	@test (@gidp markovNet a c|b) == false
+	@test (@gidp markovNet a c|d) == false
+	@test (@gidp markovNet c d|a) == true
+	@test isGraphIdp(markovGraph,3,4,condSet=[1]) == true # non-macro test.
+	@test (@gidp markovNet c b|a) == true
+end

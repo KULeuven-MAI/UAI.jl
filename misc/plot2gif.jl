@@ -27,20 +27,20 @@ a = Animatable(map(x->makePlot(x),fns))
 anim = @animate for f in a 
 	f() 
 end
-gif(anim, joinpath("plots","d-separation.gif"))
+gif(anim, joinpath("plots","d-separation2.gif"))
 ## Other failing test below:
 #
 # Some unicode chars not supported as per: https://github.com/jheinen/GR.jl/issues/143
-a = Animatable([makePlot("disoriented",title="a ⫫⃥ b | c")])
-
-using UAI
-mitGraphStr = "a>c<b; d<c>e ; d>f>g"
-@gidp(mitGraphStr, a, b | c)
-
-fns = ["original", "relevant", "moralized", "disoriented"]
-
-a = Animatable(map(x->makePlot(x),fns))
-#push!(a,makePlot("disoriented",title="a ⫫⃥ b | c"))
-
-anim = @animate for f in a end
-gif(anim, "d-separation.gif")
+#= a = Animatable([makePlot("disoriented",title="a ⫫⃥ b | c")]) =#
+#=  =#
+#= using UAI =#
+#= mitGraphStr = "a>c<b; d<c>e ; d>f>g" =#
+#= @gidp(mitGraphStr, a, b | c) =#
+#=  =#
+#= fns = ["original", "relevant", "moralized", "disoriented"] =#
+#=  =#
+#= a = Animatable(map(x->makePlot(x),fns)) =#
+#= #push!(a,makePlot("disoriented",title="a ⫫⃥ b | c")) =#
+#=  =#
+#= anim = @animate for f in a end =#
+#= gif(anim, "d-separation2.gif") =#

@@ -129,6 +129,25 @@ function moralize(g::DiGraph)
 end
 
 
+# Returns whether the two given vertices are separated when 
+# ignoring all edges passing throughthe nodes in the conditioning Set.
+function isSeparated(g::AbstractGraph, firstVertex::Int, secondVertex::Int; condSet=[])
+	return !has_path(g, firstVertex, secondVertex, exclude_vertices=condSet)
+end
+
+function isGraphIdp(g::Graph, firstVertex::Int, secondVertex::Int;
+										condSet::Array{T,1}=Int[],
+										nodeNames = collect(1:nv(g))) where T <: Integer
+	#In case of a Markov Model, simple separation test.
+	return isSeparated(g,firstVertex,secondVertex,condSet=condSet)
+end
+
+
+# Returns a function mapping the old index i of a node in g to the new index where vertices toDelete are removed from g.
+function getNewIdx(g::DiGraph,toDelete::Array{T,1}) where T<:Integer
+	return i -> findfirst(x->x==i, deleteat!(collect(vertices(g)),toDelete))
+end
+
 function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 										condSet::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
@@ -144,7 +163,8 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 
 	toDelete = [ !(x in allNodes) for x in vertices(g)]
 	remainingNodes = deleteat!(deepcopy(nodeNames),toDelete)
-	newIdx(i) = findfirst(x->x==i, deleteat!(collect(vertices(g)),toDelete))
+	#local newIdx(i) = findfirst(x->x==i, deleteat!(collect(vertices(g)),toDelete))
+	newIdx = getNewIdx(g,toDelete)
 	#println(remainingNodes)
 
 	numOfRemovals = 0
@@ -169,8 +189,10 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 	# 4) remove the elements in the condition set 
 	# 5) first & second are graph-idp if NOT connected
 	excluded = map(x->newIdx(x),condSet)
+	newFV = newIdx(firstVertex)
+	newSV = newIdx(secondVertex)
 	#println(excluded)
-	return !has_path(newG,newIdx(firstVertex), newIdx(secondVertex), exclude_vertices=excluded)
+	return isSeparated(newG, newFV, newSV, condSet=excluded)
 end
 
 function isGraphIdp(graphToParse::String, firstName::String, secondName::String; condSet::Array{String,1}=String[])
@@ -178,6 +200,7 @@ function isGraphIdp(graphToParse::String, firstName::String, secondName::String;
 	firstVertex = getNodeId(firstName,n)
 	secondVertex = getNodeId(secondName,n)
 	idcondSet = isempty(condSet) ? Int[] : map(x->getNodeId(x,n),condSet)
+	println(condSet)
 	#= println(g) =#
 	#= println(firstVertex) =#
 	#= println(secondVertex) =#

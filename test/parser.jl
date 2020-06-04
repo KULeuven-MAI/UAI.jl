@@ -1,5 +1,6 @@
 using UAI
 using Test
+using LightGraphs
 
 
 # Examples of directed graphs/BN
