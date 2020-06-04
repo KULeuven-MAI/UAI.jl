@@ -72,3 +72,18 @@ end
 	@test isGraphIdp(markovGraph,3,4,condSet=[1]) == true # non-macro test.
 	@test (@gidp markovNet c b|a) == true
 end
+
+
+@testset "Example 4.4. BRML" begin
+	BN = "t1>y2<y1; y2<t2; y1<t1;"
+	# TODO: verify.
+	# barber says:
+	# L_G = {y1 ⊥t2|t1, t2 ⊥t1}
+	# BUT i find:
+#= b = getIdpStatements(BN) =#
+#  "t1⫫t2" OK 
+#  "t1⫫t2|y1" NOK  since y2 blocks all paths
+#  "t2⫫y1" NOK Yet all paths blocked  by y2 again
+#=  "t2⫫y1|t1 OK =# 
+# Checked with both moralizing and def 3.4
+end

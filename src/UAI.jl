@@ -12,6 +12,7 @@ module UAI
 
 	include("independence.jl")
 	export idpValue,getAllAncestors,getAllDescendants,marryAll!,disorient,disorient!,moralize,moralize!,isGraphIdp
+	export getDepStatements, getIdpStatements
 
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization
