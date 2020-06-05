@@ -285,8 +285,22 @@ end
 
 function getDepStatements(graphString::String)
 	(g,n)	= parseGraph(graphString)
-	Lg = getDepStatements(g)
-	namedLg = mapAllNames(Lg,n)
+	LDg = getDepStatements(g)
+	namedLg = mapAllNames(LDg,n)
 	formatedLg = map(x->formatDepStatement(x),namedLg)
 	return formatedLg 
+end
+
+function isImap(graphString, idpList)
+	Lg = getIdpStatements(graphString)	
+	return all(map(x->x in idpList,Lg))
+end
+
+function isDmap(graphString, idpList)
+	Lg = getIdpStatements(graphString)	
+	return all(map(x->x in Lg,idpList))
+end
+
+function isPerfectMap(graphString, idpList)
+	return isImap(graphString,idpList) && isDmap(graphString,idpList)
 end
