@@ -13,6 +13,7 @@ module UAI
 	include("independence.jl")
 	export idpValue,getAllAncestors,getAllDescendants,marryAll!,disorient,disorient!,moralize,moralize!,isGraphIdp
 	export getDepStatements, getIdpStatements
+	export formatIdpStatement,formatDepStatement
 
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization
@@ -29,7 +30,7 @@ module UAI
 	export Var, getFactor
 
 	include("macros.jl")
-	export @p, @q, @query, @gidp
+	export @p, @q, @query, @gidp, @isDep, @isIdp
 
 
 # TODO:

@@ -68,3 +68,36 @@ macro gidp(graphString, firstVar, queryExpr)
 		isGraphIdp($ref, string($fV), string($qN),condSet=convert(Array{String},map(x->string(x),$eN)))
 	end
 end
+
+macro isDep(firstVar, queryExpr)
+	local (query,condSet) = parseQuery(queryExpr)
+	local fV = QuoteNode(firstVar)
+	local qN = QuoteNode(query[1]) 
+	if condSet != []
+		local eN = QuoteNode(condSet[1])
+		return quote
+			formatDepStatement((string($fV),string($qN),string($eN)))
+		end
+	else 
+		return quote
+			formatDepStatement((string($fV),string($qN)))
+		end
+	end
+end
+
+macro isIdp(firstVar, queryExpr)
+	local (query,condSet) = parseQuery(queryExpr)
+	local fV = QuoteNode(firstVar)
+	local qN = QuoteNode(query[1]) 
+	println(condSet)
+	if condSet != []
+		local eN = QuoteNode(condSet[1])
+		return quote
+			formatIdpStatement((string($fV),string($qN),string($eN)))
+		end
+	else
+		return quote
+			formatIdpStatement((string($fV),string($qN)))
+		end
+	end
+end

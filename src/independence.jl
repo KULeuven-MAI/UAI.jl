@@ -242,18 +242,24 @@ function getIdpCandidates(g)
 end
 
 function formatIdpStatement(t)
-	startStr = string(t[1],idpSym,t[2])
-	if length(t) > 2
-		return string(startStr,"|",join(t[3:end],","))
-	else
-		return startStr
-	end
+	return formatStatement(t,idpSym)
 end
 
 function formatDepStatement(t)
-	startStr = string(t[1],notIdpSym,t[2])
+	return formatStatement(t,notIdpSym)
+end
+
+function formatStatement(t,sym)
+	if issorted([t[1],t[2]])
+		first = t[1]
+		second = t[2]
+	else
+		first = t[2]
+		second = t[1]
+	end
+	startStr = string(first,sym,second)
 	if length(t) > 2
-		return string(startStr,"|",join(t[3:end],","))
+		return string(startStr,"|",join(sort(collect(t[3:end])),","))
 	else
 		return startStr
 	end
