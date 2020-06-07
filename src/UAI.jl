@@ -28,6 +28,7 @@ module UAI
 	export getChainComponents
 	export JPD, setAllDomains!, setDomain!, assignTable!
 	export Var, getFactor
+	export Query, hasConditioningSet
 
 	include("macros.jl")
 	export @p, @q, @query, @gidp, @isDep, @isIdp

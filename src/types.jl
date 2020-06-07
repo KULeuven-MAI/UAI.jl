@@ -4,6 +4,11 @@ import Base.show
 
 
 const Var = Symbol
+const Query = Tuple{Array{Var,1},Array{Var,1}}
+
+function hasConditioningSet(query)
+	return length(query[2]) > 0 
+end
 
 #= mutable struct DiscreteVar =#
 #= 	domain::Array{Any} =#
@@ -47,17 +52,23 @@ Base.show(io::IO, v::MarginalFactor) = print(io,p(v.variable))
 Base.show(io::IO, v::ConditionalFactor) = print(io,p(string(v.variable,"|",join(v.conditioningSet,","))))
 Base.show(io::IO, v::PotentialFactor) = print(io,phi(join(v.variables,",")))
 Base.show(io::IO, v::Factorization) = print(io,join(v.factors))
+Base.show(io::IO, q::Query) = if hasConditioningSet(q)
+		print(io,string(join(q[1],","),"|",join(q[2],",")))
+	else
+		print(io,string(join(q[1],",")))
+	end
 
 mutable struct JPD
 	factorization::Factorization
 	variables::Array{Var}
 	domains::Dict{Symbol,Array{Any,1}}	
-	probTables::Dict{AbstractFactor,Array{Any,1}} #where T<:Real
+	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T}}
 	function JPD(str::String) 
 		#new(getFactorization(str)...,Pair{Symbol,Array{Any,1}}[])
 		fact, vars = getFactorization(str)
 		domains = Dict(map(x->(Var(x),[]), vars)) 
 		tables = Dict(map(f->(f,Real[]),fact.factors))
+		println(typeof(tables))
 		new(fact, vars, domains, tables)
 	end
 end
@@ -75,6 +86,10 @@ end
 
 function getDomain(jpd::JPD,var::Symbol)
 	return jpd.domains[var]
+end
+
+function getFactor(jpd, query::Query)
+	getFactor(jpd,query[1][1],query[2])
 end
 
 function getFactor(jpd, query::Var)
@@ -101,7 +116,11 @@ function getFactor(jpd::JPD, query::Var, condSet::Array{Var})
 	end
 end
 
-function assignTable!(jpd,query,table)
+function assignTable!(jpd,query::Query,table)
+	return assignTable!(jpd,query[1][1],query[2],table)
+end
+
+function assignTable!(jpd,query::Var,table)
 	f = getFactor(jpd,query,Var[])
 	domain = jpd.domains[query]
 	if length(domain) !== length(table)
@@ -110,9 +129,11 @@ function assignTable!(jpd,query,table)
 	jpd.probTables[f] = table 
 end
 
-function assignTable!(jpd,query,condSet,table)
+function assignTable!(jpd,query::Var,condSet,table)
 	f = getFactor(jpd,query,condSet)
+	println(f)
 	sizes = size(table)
+	println(sizes)
 	jpd.probTables[f] = table 
 end
 

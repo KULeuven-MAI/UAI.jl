@@ -55,7 +55,7 @@ end
 
 # shorthand for queries.
 macro q(queryExpr)
-	return :(@query $(queryExpr))
+	return :(Query(@query $(queryExpr)))
 end
 
 macro gidp(graphString, firstVar, queryExpr)
