@@ -29,3 +29,15 @@ threeCliqueFactors = ["ϕ(1,2,3)","ϕ(2,3,4)","ϕ(4,5,6)","ϕ(5,6,7)"]
 	@test all(x->occursin(x,factoredThreeC),threeCliqueFactors)
 	@test all(x->occursin(x,factoredTwoC),twoCliqueFactors)
 end
+
+@testset "hasFactor and query macro" begin
+	str = "c<a>d;d<b;f<d>g<e"
+	jpd = JPD(str)
+	@test hasFactor(jpd,@q a)
+	@test hasFactor(jpd,@q b)
+	@test hasFactor(jpd,@q e)
+	@test hasFactor(jpd,@q c|a)
+	@test hasFactor(jpd,@q d|a,b)
+	@test hasFactor(jpd,@q f|d)
+	@test hasFactor(jpd,@q g|d,e)
+end
