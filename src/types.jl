@@ -62,7 +62,7 @@ mutable struct JPD
 	factorization::Factorization
 	variables::Array{Var}
 	domains::Dict{Symbol,Array{Any,1}}	
-	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T}}
+	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T,N} where N}
 	function JPD(str::String) 
 		#new(getFactorization(str)...,Pair{Symbol,Array{Any,1}}[])
 		fact, vars = getFactorization(str)
@@ -114,6 +114,11 @@ function getFactor(jpd::JPD, query::Var, condSet::Array{Var})
 			end
 		end
 	end
+	return nothing
+end
+
+function hasFactor(jpd::JPD, queryTuple)
+	return getFactor(jpd, queryTuple[1][1],queryTuple[2]) !== nothing
 end
 
 function assignTable!(jpd,query::Query,table)

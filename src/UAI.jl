@@ -24,7 +24,7 @@ module UAI
 	include("types.jl")
 	export DiscreteVar, getDomain, assign, hasAssignment, hasDomain, setDomain
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
-	export getFactorization, getFactor, getGraph
+	export getFactorization, getFactor, getGraph, hasFactor
 	export getChainComponents
 	export JPD, setAllDomains!, setDomain!, assignTable!
 	export Var, getFactor
@@ -34,9 +34,7 @@ module UAI
 	export @p, @q, @query, @gidp, @isDep, @isIdp
 
 
-# TODO:
-# Make data structure for conditional, marginal prob, JPD, ...
-# Use DataFrames for datasets
+# Use DataFrames for datasets?
 
 # Lesson 2 
 # Make Noisy OR/AND
