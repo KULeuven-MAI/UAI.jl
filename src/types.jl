@@ -1,5 +1,6 @@
 using LightGraphs
 using UAI
+using NamedArrays
 import Base.show
 
 
@@ -160,16 +161,26 @@ function hasAssignment(v::Var)
 	return !isnothing(v.assignment)
 end
 
-function hasDomain(v::Var)
-	return !isempty(v.domain)
+function hasDomain(jpd::JPD, v::Var)
+	return !isempty(getDomain(jpd,v))
+end
+
+function hasDomains(jpd::JPD, f::AbstractFactor)
+	return all(map(x->hasDomain(jpd,x),getVariables(f)))
+end
+
+function getNamedTable(jpd::JPD, factor::AbstractFactor)
+	vars = getVariables(factor)
+	if !hasDomains(jpd,factor)	
+		throw(error("The domains of $vars should all be set first!"))
+	end
+	domains = map(v->getDomain(jpd,v),vars) 
+	lengths = map(d->length(d), domains)
+	return NamedArray(ones(lengths...),domains, vars)
 end
 
 function setDomain!(v::Var, domain)
 	v.domain = domain
-end
-
-function getDomain(v::Var)
-	return v.domain
 end
 
 """
@@ -190,13 +201,29 @@ function getPotentialFactor(graph,clique,names)
 	return PotentialFactor(vars)	
 end
 
-function getVariables(names)
+function mapVar(names)
 	return map(x->Var(x),names)
+end
+
+function getVariables(f::AbstractFactor)
+	throw(error("Doesn't work for abstract type."))
+end
+
+function getVariables(f::BayesianFactor)
+	result = f.variable
+	if f isa ConditionalFactor
+		result = vcat(result,f.conditioningSet)
+	end
+	return result
+end
+
+function getVariables(f::MarkovFactor)
+	return f.variables
 end
 
 function getFactorization(str)
 	(sg, nodeNames) = parseGraph(str)
-	variables = getVariables(nodeNames) 
+	variables = mapVar(nodeNames) 
 	if is_directed(sg)
 		#println(string("p(",join(nodeNames,","),") ="))
 		factors = Factorization(map(v->getBayesianFactor(sg,v,nodeNames),vertices(sg)))

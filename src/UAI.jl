@@ -24,9 +24,9 @@ module UAI
 	include("types.jl")
 	export DiscreteVar, getDomain, assign, hasAssignment, hasDomain, setDomain
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
-	export getFactorization, getFactor, getGraph, hasFactor
+	export getFactorization, getFactor, getGraph, hasFactor, getVariables
 	export getChainComponents
-	export JPD, setAllDomains!, setDomain!, assignTable!
+	export JPD, setAllDomains!, setDomain!, assignTable!, hasDomains, getNamedTable
 	export Var, getFactor
 	export Query, hasConditioningSet
 
