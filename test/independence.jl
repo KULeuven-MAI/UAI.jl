@@ -92,15 +92,15 @@ end
 @testset "Imap and Dmap Exc 3.2.1" begin
 	lp = [(@isIdp c a) (@isIdp a d) (@isIdp c b|a)]
 	graphstring = "c>a>b<d>a"
-	@test isImap(graphstring,lp) == false
-	@test isDmap(graphstring,lp) == false
+	@test isIMap(graphstring,lp) == false
+	@test isDMap(graphstring,lp) == false
 	@test isPerfectMap(graphstring,lp) == false
 end
 
 @testset "Imap and Dmap Exc 3.2.2" begin
 	lp = [(@isIdp c d|a) (@isIdp c b|a)]
 	graphstring = "c-a-b-d-a"
-	@test isImap(graphstring,lp) == true 
-	@test isDmap(graphstring,lp) == true 
+	@test isIMap(graphstring,lp) == true 
+	@test isDMap(graphstring,lp) == true 
 	@test isPerfectMap(graphstring,lp) == true 
 end

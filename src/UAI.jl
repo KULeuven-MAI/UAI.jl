@@ -14,6 +14,7 @@ module UAI
 	export idpValue,getAllAncestors,getAllDescendants,marryAll!,disorient,disorient!,moralize,moralize!,isGraphIdp
 	export getDepStatements, getIdpStatements
 	export formatIdpStatement,formatDepStatement
+	export isPerfectMap, isDMap, isIMap
 
 	include("parser.jl")
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization

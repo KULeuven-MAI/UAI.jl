@@ -5,6 +5,9 @@ import Base.show
 
 
 const Var = Symbol
+# Query is a representation of a probability query e.g.
+# p(a,b|c,d) == ([:a, :b], [:c, :d])
+# Can be constructed with @q or @query
 const Query = Tuple{Array{Var,1},Array{Var,1}}
 
 function hasConditioningSet(query)
@@ -169,14 +172,28 @@ function hasDomains(jpd::JPD, f::AbstractFactor)
 	return all(map(x->hasDomain(jpd,x),getVariables(f)))
 end
 
-function getNamedTable(jpd::JPD, factor::AbstractFactor)
+
+function getNamedTable(jpd, factor::AbstractFactor)
 	vars = getVariables(factor)
 	if !hasDomains(jpd,factor)	
 		throw(error("The domains of $vars should all be set first!"))
 	end
 	domains = map(v->getDomain(jpd,v),vars) 
 	lengths = map(d->length(d), domains)
-	return NamedArray(ones(lengths...),domains, vars)
+	if factor isa MarginalFactor
+		# Fix this upstream?
+		return NamedArray(zeros(lengths...),domains..., vars...)
+	else
+		return NamedArray(zeros(lengths...),domains, vars)
+	end
+end
+
+function getNamedTable(jpd::JPD, q::Query)
+	factor = getFactor(jpd,q)
+	if factor === nothing
+		throw(error("The query provided is not defined in the JPD: $JPD"))
+	end
+	return getNamedTable(jpd,factor)
 end
 
 function setDomain!(v::Var, domain)
@@ -210,7 +227,7 @@ function getVariables(f::AbstractFactor)
 end
 
 function getVariables(f::BayesianFactor)
-	result = f.variable
+	result = [f.variable]
 	if f isa ConditionalFactor
 		result = vcat(result,f.conditioningSet)
 	end

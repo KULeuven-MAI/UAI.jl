@@ -18,21 +18,19 @@ end
 
 # Generates an array of n random but normalized numbers. 
 function normRands(n::Int)
-	genRandTot(n,1)
+	return normRands((n,))
+	#genRandTot(n,1)
 	# Should be shuffled for an actual random list, but shuffling fails some tests? :thinkingface:
 	# shuffle(genRandTot(n,1))
 end
 
-# Generates an array of n random but normalized numbers and shuffled
-function normRandsShuf(n)
-	# Should be shuffled for an actual random list, but shuffling fails some tests? :thinkingface:
-	shuffle(genRandTot(n,1))
+function normRands(shape::Tuple)
+	return normalize(map(x->rand(), ones(shape)))
 end
 
 # Generates a random but normalized tensor of the given shape
 function normRandsTensor(shape)
-	n = prod(shape)
-	reshape(normRands(n),shape)
+	return normalize(map(x->rand(), ones(shape)))
 end
 
 # Tests whether the tensor is strictly positive

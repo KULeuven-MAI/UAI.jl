@@ -291,12 +291,12 @@ function getDepStatements(graphString::String)
 	return formatedLg 
 end
 
-function isImap(graphString, idpList)
+function isIMap(graphString, idpList)
 	Lg = getIdpStatements(graphString)	
 	return all(map(x->x in idpList,Lg))
 end
 
-function isDmap(graphString, idpList)
+function isDMap(graphString, idpList)
 	Lg = getIdpStatements(graphString)	
 	return all(map(x->x in Lg,idpList))
 end
