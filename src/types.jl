@@ -1,8 +1,6 @@
 using LightGraphs
 using UAI
-using NamedArrays
 import Base.show
-
 
 const Var = Symbol
 # Query is a representation of a probability query e.g.
@@ -68,11 +66,9 @@ mutable struct JPD
 	domains::Dict{Symbol,Array{Any,1}}	
 	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T,N} where N}
 	function JPD(str::String) 
-		#new(getFactorization(str)...,Pair{Symbol,Array{Any,1}}[])
 		fact, vars = getFactorization(str)
 		domains = Dict(map(x->(Var(x),[]), vars)) 
-		tables = Dict(map(f->(f,Real[]),fact.factors))
-		println(typeof(tables))
+		tables = Dict{AbstractFactor,Array{Float64}}()
 		new(fact, vars, domains, tables)
 	end
 end
@@ -130,6 +126,8 @@ function assignTable!(jpd,query::Query,table)
 end
 
 function assignTable!(jpd,query::Var,table)
+	# TODO: check matching names?
+	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,Var[])
 	domain = jpd.domains[query]
 	if length(domain) !== length(table)
@@ -139,11 +137,18 @@ function assignTable!(jpd,query::Var,table)
 end
 
 function assignTable!(jpd,query::Var,condSet,table)
+	# TODO: check matching names?
+	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,condSet)
 	println(f)
 	sizes = size(table)
 	println(sizes)
 	jpd.probTables[f] = table 
+end
+
+
+function getProbTable(jpd,query)
+
 end
 
 function assign(v::Var, value)
@@ -172,6 +177,31 @@ function hasDomains(jpd::JPD, f::AbstractFactor)
 	return all(map(x->hasDomain(jpd,x),getVariables(f)))
 end
 
+# TODO: Define this in function of getNamedTable?
+#= function getTable(jpd, factor::AbstractFactor) =#
+#= 	vars = getVariables(factor) =#
+#= 	if !hasDomains(jpd,factor)	 =#
+#= 		throw(error("The domains of $vars should all be set first!")) =#
+#= 	end =#
+#= 	domains = map(v->getDomain(jpd,v),vars)  =#
+#= 	lengths = map(d->length(d), domains) =#
+#= 	if factor isa MarginalFactor =#
+#= 		# Fix this upstream? =#
+#= 		return NamedArray(jpd.probTables[factor],domains..., vars...) =#
+#= 	else =#
+#= 		return NamedArray(jpd.probTables[factor],domains, vars) =#
+#= 	end =#
+#= end =#
+
+# TODO: Define this in function of getNamedTable?
+#= function getTable(jpd::JPD, q::Query) =#
+#= 	factor = getFactor(jpd,q) =#
+#= 	if factor === nothing =#
+#= 		throw(error("The query provided is not defined in the JPD: $JPD")) =#
+#= 	end =#
+#= 	return getTable(jpd,factor) =#
+#= end =#
+#=  =#
 
 function getNamedTable(jpd, factor::AbstractFactor)
 	vars = getVariables(factor)
@@ -269,3 +299,5 @@ function getChainComponents(graph::SimpleDiGraph)
 	result = connected_components(newG)
 	return result
 end
+
+

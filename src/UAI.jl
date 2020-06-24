@@ -34,6 +34,9 @@ module UAI
 	include("macros.jl")
 	export @p, @q, @query, @gidp, @isDep, @isIdp
 
+	include("interactive.jl")
+	export setTableInteractive!
+
 
 # Use DataFrames for datasets?
 
