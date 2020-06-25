@@ -28,6 +28,7 @@ julia> @gidp "a>c<b" a b|c
 a ⫫⃥ b | c
 false
 ```
+- Interactive adding of probability tables see [examples/simple.ipynb](https://github.com/KULeuven-MAI/UAI.jl/blob/master/examples/simple.ipynb)
 
 ## Installation
 You can get [Julia 1.4 here](https://julialang.org/downloads/). 
