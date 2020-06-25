@@ -141,8 +141,7 @@ end
 
 function assignTable!(jpd::JPD,factor::AbstractFactor,table)
 	nt = getNamedTable(jpd,factor)
-	println("Setting table for $factor:")
-	println(nt)
+	println("Setting table for $factor")
 	requiredSize = size(nt) 
 	if requiredSize != size(table)
 		throws(error("Table sizes mismatch, should be $requiredSize"))
