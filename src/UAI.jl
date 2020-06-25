@@ -23,7 +23,7 @@ module UAI
 	export drawGraph, drawFromStr, saveToFile
 
 	include("types.jl")
-	export DiscreteVar, getDomain, assign, hasAssignment, hasDomain, setDomain
+	export DiscreteVar, getDomain, hasDomain, setDomain
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
 	export getFactorization, getFactor, getGraph, hasFactor, getVariables
 	export getChainComponents
@@ -35,7 +35,7 @@ module UAI
 	export @p, @q, @query, @gidp, @isDep, @isIdp
 
 	include("interactive.jl")
-	export setTableInteractive!
+	export setTableInteractive!,setAllInteractive!
 
 
 # Use DataFrames for datasets?

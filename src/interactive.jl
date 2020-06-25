@@ -20,21 +20,35 @@ end
 # Iterator for NamedArray
 Base.iterate(na::NamedArray, state=1) = state > length(na) ? nothing : begin ( (flattenednames(na)[state],na[flattenednames(na)[state]...]), state +1) end
 
-function setTableInteractive!(jpd, query::Query)
-	nt = getNamedTable(jpd,query)
+
+#= function formatAssignment(factor::AbstractFactor, asgTuples::Array{Tuple{X,Y},1}) where {X,Y} =#
+function formatAssignment(factor::AbstractFactor, asgTuples)
+	str = string(factor)
+	result = str
+	for (varName,varVal) in asgTuples
+		result = replace(result, Regex("$(varName)") => "$varName=$varVal")
+	end
+	return result
+end
+
+function setTableInteractive!(jpd, queryOrFactor)
+	nt = getNamedTable(jpd,queryOrFactor)
 	for (name, val) in nt
-		tup = zip(dimnames(nt),name)
-		println(tup)
+		asgTups = zip(dimnames(nt),name)
+		f = queryOrFactor isa AbstractFactor ? queryOrFactor : getFactor(jpd,queryOrFactor)
+		println("Enter floating point value for ")
+		println(formatAssignment(f,asgTups))
 		newval = parse(Float64,readline())
 		nt[name...] = newval
 	end
-	assignTable!(jpd,query,nt)
+	assignTable!(jpd,queryOrFactor,nt)
 	println(nt)
 end
 
 
-#= function setAllInteractive!(jpd) =#
-#= 	for f in jpd.factorization.factors =#
-#= 		setTableInteractive(jpd,f) =#
-#= 	end =#
-#= end =#
+function setAllInteractive!(jpd)
+	for f in jpd.factorization.factors
+		setTableInteractive!(jpd,f)
+	end
+end
+

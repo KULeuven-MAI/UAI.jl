@@ -12,12 +12,6 @@ function hasConditioningSet(query)
 	return length(query[2]) > 0 
 end
 
-#= mutable struct DiscreteVar =#
-#= 	domain::Array{Any} =#
-#= 	assignment::Any =#
-#= 	name::String =#
-#= end =#
-#Base.show(io::IO, v::Var) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
 
 
 abstract type AbstractFactor end
@@ -121,11 +115,11 @@ function hasFactor(jpd::JPD, queryTuple)
 	return getFactor(jpd, queryTuple[1][1],queryTuple[2]) !== nothing
 end
 
-function assignTable!(jpd,query::Query,table)
+function assignTable!(jpd::JPD,query::Query,table)
 	return assignTable!(jpd,query[1][1],query[2],table)
 end
 
-function assignTable!(jpd,query::Var,table)
+function assignTable!(jpd::JPD,query::Var,table)
 	# TODO: check matching names?
 	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,Var[])
@@ -136,39 +130,50 @@ function assignTable!(jpd,query::Var,table)
 	jpd.probTables[f] = table 
 end
 
-function assignTable!(jpd,query::Var,condSet,table)
+
+function assignTable!(jpd::JPD,query::Var,condSet,table)
 	# TODO: check matching names?
 	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,condSet)
-	println(f)
-	sizes = size(table)
-	println(sizes)
-	jpd.probTables[f] = table 
+	assignTable!(jpd,f,table)
 end
 
 
-function getProbTable(jpd,query)
-
-end
-
-function assign(v::Var, value)
-	#TODO
-	throws(error("UNiplemented"))
-	if value in v.domain
-		return Var(v.domain, value, v.name)
-	else
-		throws(error("A variable can only be assigned a value in it's domain."))
+function assignTable!(jpd::JPD,factor::AbstractFactor,table)
+	nt = getNamedTable(jpd,factor)
+	println("Setting table for $factor:")
+	println(nt)
+	requiredSize = size(nt) 
+	if requiredSize != size(table)
+		throws(error("Table sizes mismatch, should be $requiredSize"))
 	end
+	jpd.probTables[factor] = table 
 end
 
-function getName(v::Var)
-	return v.name
-end
+#= mutable struct DiscreteVar =#
+#= 	domain::Array{Any} =#
+#= 	assignment::Any =#
+#= 	name::String =#
+#= end =#
+#Base.show(io::IO, v::Var) = v.assignment == nothing ? print(io, v.name) : print(io, v.name, "=", v.assignment)
+#= function assign(v::Var, value) =#
+#= 	#TODO =#
+#= 	throws(error("UNiplemented")) =#
+#= 	if value in v.domain =#
+#= 		return Var(v.domain, value, v.name) =#
+#= 	else =#
+#= 		throws(error("A variable can only be assigned a value in it's domain.")) =#
+#= 	end =#
+#= end =#
 
-function hasAssignment(v::Var)
-	return !isnothing(v.assignment)
-end
+#= function getName(v::Var) =#
+#= 	return v.name =#
+#= end =#
 
+#= function hasAssignment(v::Var) =#
+#= 	return !isnothing(v.assignment) =#
+#= end =#
+#=  =#
 function hasDomain(jpd::JPD, v::Var)
 	return !isempty(getDomain(jpd,v))
 end
@@ -203,6 +208,11 @@ end
 #= end =#
 #=  =#
 
+"""
+Returns an empty NamedArray with all the names set if all domains of the factor are specified.
+
+Errors when some of the required domains are still not specified.
+"""
 function getNamedTable(jpd, factor::AbstractFactor)
 	vars = getVariables(factor)
 	if !hasDomains(jpd,factor)	
