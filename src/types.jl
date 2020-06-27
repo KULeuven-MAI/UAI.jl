@@ -115,11 +115,11 @@ function hasFactor(jpd::JPD, queryTuple)
 	return getFactor(jpd, queryTuple[1][1],queryTuple[2]) !== nothing
 end
 
-function assignTable!(jpd::JPD,query::Query,table)
-	return assignTable!(jpd,query[1][1],query[2],table)
+function setTable!(jpd::JPD,query::Query,table)
+	return setTable!(jpd,query[1][1],query[2],table)
 end
 
-function assignTable!(jpd::JPD,query::Var,table)
+function setTable!(jpd::JPD,query::Var,table)
 	# TODO: check matching names?
 	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,Var[])
@@ -131,16 +131,16 @@ function assignTable!(jpd::JPD,query::Var,table)
 end
 
 
-function assignTable!(jpd::JPD,query::Var,condSet,table)
+function setTable!(jpd::JPD,query::Var,condSet,table)
 	# TODO: check matching names?
 	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,condSet)
-	assignTable!(jpd,f,table)
+	setTable!(jpd,f,table)
 end
 
 
-function assignTable!(jpd::JPD,factor::AbstractFactor,table)
-	nt = getNamedTable(jpd,factor)
+function setTable!(jpd::JPD,factor::AbstractFactor,table)
+	nt = getNamedTable(jpd,factor,empty=true)
 	println("Setting table for $factor")
 	requiredSize = size(nt) 
 	if requiredSize != size(table)
@@ -181,49 +181,46 @@ function hasDomains(jpd::JPD, f::AbstractFactor)
 	return all(map(x->hasDomain(jpd,x),getVariables(f)))
 end
 
-# TODO: Define this in function of getNamedTable?
-#= function getTable(jpd, factor::AbstractFactor) =#
-#= 	vars = getVariables(factor) =#
-#= 	if !hasDomains(jpd,factor)	 =#
-#= 		throw(error("The domains of $vars should all be set first!")) =#
-#= 	end =#
-#= 	domains = map(v->getDomain(jpd,v),vars)  =#
-#= 	lengths = map(d->length(d), domains) =#
-#= 	if factor isa MarginalFactor =#
-#= 		# Fix this upstream? =#
-#= 		return NamedArray(jpd.probTables[factor],domains..., vars...) =#
-#= 	else =#
-#= 		return NamedArray(jpd.probTables[factor],domains, vars) =#
-#= 	end =#
-#= end =#
+function getTable(jpd, factor::AbstractFactor)
+	return jpd.probTables[factor]
+end
 
 # TODO: Define this in function of getNamedTable?
-#= function getTable(jpd::JPD, q::Query) =#
-#= 	factor = getFactor(jpd,q) =#
-#= 	if factor === nothing =#
-#= 		throw(error("The query provided is not defined in the JPD: $JPD")) =#
-#= 	end =#
-#= 	return getTable(jpd,factor) =#
-#= end =#
-#=  =#
+function getTable(jpd::JPD, q::Query)
+	factor = getFactor(jpd,q)
+	if factor === nothing
+		throw(error("The query provided is not defined in the JPD: $JPD"))
+	end
+	return getTable(jpd,factor)
+end
+
 
 """
 Returns an empty NamedArray with all the names set if all domains of the factor are specified.
 
 Errors when some of the required domains are still not specified.
 """
-function getNamedTable(jpd, factor::AbstractFactor)
+function getNamedTable(jpd, factor::AbstractFactor; empty=false)
 	vars = getVariables(factor)
 	if !hasDomains(jpd,factor)	
 		throw(error("The domains of $vars should all be set first!"))
 	end
 	domains = map(v->getDomain(jpd,v),vars) 
 	lengths = map(d->length(d), domains)
+	if empty == true
+		values = zeros(lengths...)
+	else
+		try 
+			values = getTable(jpd,factor)	
+		catch e # KeyError
+			values = zeros(lengths...)
+		end
+	end
 	if factor isa MarginalFactor
 		# Fix this upstream?
-		return NamedArray(zeros(lengths...),domains..., vars...)
+		return NamedArray(values,domains..., vars...)
 	else
-		return NamedArray(zeros(lengths...),domains, vars)
+		return NamedArray(values,domains, vars)
 	end
 end
 

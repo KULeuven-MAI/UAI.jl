@@ -27,7 +27,7 @@ module UAI
 	export AbstractFactor, MarginalFactor, ConditionalFactor, JoinedFactor, Factorization
 	export getFactorization, getFactor, getGraph, hasFactor, getVariables
 	export getChainComponents
-	export JPD, setAllDomains!, setDomain!, assignTable!, hasDomains, getNamedTable
+	export JPD, setAllDomains!, setDomain!, setTable!, getTable, hasDomains, getNamedTable
 	export Var, getFactor
 	export Query, hasConditioningSet
 

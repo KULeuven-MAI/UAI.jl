@@ -40,7 +40,7 @@ macro p(jpd, queryExpr)
 	local q = QuoteNode(query[1])
 	return quote
 		# This should be replaced with the appropriate calculation.
-		assignTable!($ref,$q,[])
+		setTable!($ref,$q,[])
 	end
 end
 

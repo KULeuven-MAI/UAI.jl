@@ -9,3 +9,4 @@ setDomain!(j,:gotDrug,[:drug, :noDrug])
 setDomain!(j,:health,[:healthy, :ill])
 
 setAllInteractive!(j)
+j
