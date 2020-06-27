@@ -144,7 +144,7 @@ function setTable!(jpd::JPD,factor::AbstractFactor,table)
 	println("Setting table for $factor")
 	requiredSize = size(nt) 
 	if requiredSize != size(table)
-		throws(error("Table sizes mismatch, should be $requiredSize"))
+		throws(error("Table sizes mismatch, should be $requiredSize. Run getNamedTable with empty=true as example."))
 	end
 	jpd.probTables[factor] = table 
 end
@@ -185,7 +185,6 @@ function getTable(jpd, factor::AbstractFactor)
 	return jpd.probTables[factor]
 end
 
-# TODO: Define this in function of getNamedTable?
 function getTable(jpd::JPD, q::Query)
 	factor = getFactor(jpd,q)
 	if factor === nothing
