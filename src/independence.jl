@@ -302,5 +302,5 @@ function isDMap(graphString, idpList)
 end
 
 function isPerfectMap(graphString, idpList)
-	return isImap(graphString,idpList) && isDmap(graphString,idpList)
+	return isIMap(graphString,idpList) && isDMap(graphString,idpList)
 end
