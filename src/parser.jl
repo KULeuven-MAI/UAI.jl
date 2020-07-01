@@ -1,6 +1,5 @@
 using LightGraphs
-# For flatten()
-using Base.Iterators 
+using Base.Iterators: flatten
 
 # Parser for converting ascii graphs into computational and visual graphs.
 # Supported:
