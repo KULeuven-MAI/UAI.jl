@@ -47,20 +47,29 @@ getDimType(dict::OrderedCollections.OrderedDict{K,V}) where {K,V} = K
 
 """
 Converts a NamedArray to a DataFrame.
+
 """
-function convert(t::Type{DataFrame}, n::NamedArray{V}) where {V}
+function convert(t::Type{DataFrame}, n::NamedArray{V}; valueCol = :Values) where {V}
 	mydimnames = n.dimnames
 	mytypes = map(dict->getDimType(dict),n.dicts)
-	println(mydimnames)
-	println(mytypes)
 	dfArgs = map((d,t)-> d=>t[], mydimnames, mytypes)
-	#= dfArgs = map((d,t)-> d=>String[], mydimnames, mytypes) =#
-	dfArgs = (dfArgs..., :Values => V[])
+	dfArgs = (dfArgs..., valueCol => V[])
 	df = DataFrame(dfArgs...)
-	#= map((dn,v) -> push!(df,(dn...,v)),enamerate(n)) =#
-	println(df)
 	map(tup -> push!(df,(tup[1]...,tup[2])),enamerate(n))
 	return df
+end
+
+"""
+Converts a DataFrame to a NamedArray.
+"""
+function convert(t::Type{NamedArray}, df::DataFrame; valueCol = :Values)
+	newdimnames = propertynames(df)
+	deleteat!(newdimnames,findfirst(x->x==:Values,newdimnames))
+	names = map(dn->unique(df[!,dn]),newdimnames)
+	lengths = map(length,names)
+	println(names)
+	newna = NamedArray( reshape(df[!,valueCol], lengths...), tuple(names...), tuple(newdimnames...))
+	return newna
 end
 
 function selectdiminv(n::NamedArray, dimname, dimvals) 
