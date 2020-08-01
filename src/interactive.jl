@@ -3,7 +3,6 @@ using InvertedIndices
 using UAI
 using DataFrames
 using CSV
-using OrderedCollections
 
 
 #TODO: switch out with implementation from NamedArrays
