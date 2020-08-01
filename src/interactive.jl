@@ -1,5 +1,4 @@
 using NamedArrays
-using CSV
 using InvertedIndices
 using UAI
 using DataFrames
@@ -54,6 +53,12 @@ function convert(t::Type{NamedArray}, df::DataFrame; valueCol = :Values)
 	newna = NamedArray( reshape(df[!,valueCol], lengths...), tuple(names...), tuple(newdimnames...))
 	return newna
 end
+import CSV.write
+
+function write(file, na::NamedArray; kwargs...)
+	table = convert(DataFrame,na)
+	CSV.write(file, table; kwargs...)
+end
 
 #= function formatAssignment(factor::AbstractFactor, asgTuples::Array{Tuple{X,Y},1}) where {X,Y} =#
 function formatAssignment(factor::AbstractFactor, asgTuples)
@@ -80,7 +85,6 @@ function setTableInteractive!(jpd, queryOrFactor;autofill=nothing)
 			nt[name...] = newval
 		end
 	end
-	setTable!(jpd,queryOrFactor,nt)
 	println(nt)
 	if autofill != nothing 
 		#TODO: key not found bug? 0_o
@@ -89,9 +93,10 @@ function setTableInteractive!(jpd, queryOrFactor;autofill=nothing)
 			others = selectdim(nt,firstdim,Not(autofill))
 			oneComp = oneComplement(sum(others,dims=1))
 			selectdim(nt,firstdim,autofill) .= oneComp
-			println(nt)
-			setTable!(jpd,queryOrFactor,nt)
+			println("Auto-filled for value $autofill:")
+			println(selectdim(nt,firstdim,autofill))
 	end
+	setTable!(jpd,queryOrFactor,nt)
 end
 
 
@@ -101,9 +106,3 @@ function setAllInteractive!(jpd)
 	end
 end
 
-import CSV.write
-
-function write(file, na::NamedArray; kwargs...)
-	table = convert(DataFrame,na)
-	CSV.write(file, table; kwargs...)
-end

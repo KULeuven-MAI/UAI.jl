@@ -57,11 +57,13 @@ Base.show(io::IO, q::Query) = if hasConditioningSet(q)
 mutable struct JPD
 	factorization::Factorization
 	variables::Array{Var}
-	domains::Dict{Symbol,Array{Any,1}}	
+	domains::Dict{Symbol,Union{Vector,Nothing}}
+	#= domains::Dict{Symbol,Array{Any,1}}  =#
 	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T,N} where N}
 	function JPD(str::String) 
 		fact, vars = getFactorization(str)
-		domains = Dict(map(x->(Var(x),[]), vars)) 
+		domains = Dict(map(x->(Var(x),nothing), vars)) 
+		#domains = Dict(map(x->(Var(x),convert(Vector,[])), vars)) 
 		tables = Dict{AbstractFactor,Array{Float64}}()
 		new(fact, vars, domains, tables)
 	end
@@ -174,7 +176,7 @@ end
 #= end =#
 #=  =#
 function hasDomain(jpd::JPD, v::Var)
-	return !isempty(getDomain(jpd,v))
+	return getDomain(jpd,v) != nothing
 end
 
 function hasDomains(jpd::JPD, f::AbstractFactor)

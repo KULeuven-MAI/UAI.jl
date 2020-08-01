@@ -1,0 +1,49 @@
+Had this in the REPL from UAI.jl
+1|julia> n
+3×2×2 Named Array{Float64,3}
+
+[:, :, c=t] =
+b ╲ a │   t    f
+──────┼─────────
+m     │ 0.2  0.0
+t     │ 0.1  0.1
+f     │ 0.0  0.0
+
+[:, :, c=f] =
+b ╲ a │   t    f
+──────┼─────────
+m     │ 0.1  0.1
+t     │ 0.1  0.1
+f     │ 0.0  0.0
+
+1|julia> write("invidxbug.csv",n)
+"invidxbug.csv"
+
+1|julia> n[Not("f"),:,:]
+ERROR: KeyError: key InvertedIndex{String}("f") not found
+Stacktrace:
+ [1] getindex at /Users/dietercastel/.julia/packages/OrderedCollections/P6ntV/src/ordered_dict.jl:354 [inlined]
+ [2] indices at /Users/dietercastel/.julia/dev/NamedArrays/src/index.jl:71 [inlined]
+ [3] #35 at /Users/dietercastel/.julia/dev/NamedArrays/src/index.jl:58 [inlined]
+ [4] map at ./tuple.jl:180 [inlined]
+ [5] getindex(::NamedArray{Float64,3,Array{Float64,3},Tuple{OrderedCollections.OrderedDict{Any,Int64},OrderedCollections.OrderedDict{Any,Int64},OrderedCollections.OrderedDict{Any,Int64}}}, ::InvertedIndex{String}, ::Function, ::Function) at /Users/dietercastel/.julia/dev/NamedArrays/src/index.jl:58
+ [6] top-level scope at REPL[107]:1
+ [7] eval at ./boot.jl:331 [inlined]
+ [8] eval_code(::JuliaInterpreter.Frame, ::Expr) at /Users/dietercastel/.julia/packages/JuliaInterpreter/jYH1M/src/utils.jl:527
+ [9] eval_code(::JuliaInterpreter.Frame, ::String) at /Users/dietercastel/.julia/packages/JuliaInterpreter/jYH1M/src/utils.jl:504
+ [10] _eval_code(::JuliaInterpreter.Frame, ::String) at /Users/dietercastel/.julia/packages/Debugger/eTh3Q/src/repl.jl:202
+ [11] (::Debugger.var"#27#29"{Debugger.DebuggerState})(::REPL.LineEdit.MIState, ::Base.GenericIOBuffer{Array{UInt8,1}}, ::Bool) at /Users/dietercastel/.julia/packages/Debugger/eTh3Q/src/repl.jl:185
+ [12] #invokelatest#1 at ./essentials.jl:712 [inlined]
+ [13] invokelatest at ./essentials.jl:711 [inlined]
+ [14] run_interface(::REPL.Terminals.TextTerminal, ::REPL.LineEdit.ModalInterface, ::REPL.LineEdit.MIState) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/REPL/src/LineEdit.jl:2354
+ [15] run_interface(::REPL.Terminals.TextTerminal, ::REPL.LineEdit.ModalInterface) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/REPL/src/LineEdit.jl:2348
+ [16] RunDebugger(::JuliaInterpreter.Frame, ::Nothing, ::Nothing; initial_continue::Bool) at /Users/dietercastel/.julia/packages/Debugger/eTh3Q/src/repl.jl:158
+ [17] RunDebugger at /Users/dietercastel/.julia/packages/Debugger/eTh3Q/src/repl.jl:4 [inlined] (repeats 2 times)
+ [18] top-level scope at /Users/dietercastel/.julia/packages/Debugger/eTh3Q/src/Debugger.jl:126
+ [19] eval(::Module, ::Any) at ./boot.jl:331
+ [20] eval_user_input(::Any, ::REPL.REPLBackend) at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/REPL/src/REPL.jl:86
+ [21] run_backend(::REPL.REPLBackend) at /Users/dietercastel/.julia/packages/Revise/AMRie/src/Revise.jl:1023
+ [22] top-level scope at REPL[1]:0
+
+
+Worked perfectly otherwise from simple NamedArrays repl.

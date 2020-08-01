@@ -1,0 +1,13 @@
+b,a,c,Values
+m,t,t,0.2
+t,t,t,0.1
+f,t,t,0.0
+m,f,t,0.0
+t,f,t,0.1
+f,f,t,0.0
+m,t,f,0.1
+t,t,f,0.1
+f,t,f,0.0
+m,f,f,0.1
+t,f,f,0.1
+f,f,f,0.0

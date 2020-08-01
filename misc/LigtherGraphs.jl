@@ -32,7 +32,7 @@ function parseSyntax(str)
 		dir = true
 	end
 	subParts = split(str, ';')
-	allnodes = unique(collect(flatten(map(x->split(x,r"<|>"),subParts))))
+	allnodes = unique(collect(Base.Iterators.flatten(map(x->split(x,r"<|>"),subParts))))
 	println(allnodes)
 	totalNodes = length(allnodes)
 	if dir
