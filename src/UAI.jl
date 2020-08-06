@@ -37,6 +37,9 @@ module UAI
 	include("interactive.jl")
 	export setTableInteractive!,setAllInteractive!
 
+	include("bucketElimination.jl")
+	export bucketInitialise, eliminate, MessageFactor
+
 
 # Use DataFrames for datasets?
 
