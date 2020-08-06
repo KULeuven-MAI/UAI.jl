@@ -46,7 +46,7 @@ end
 # From the given subParts array create an undirected graph and a nodename list.
 function makeUndiGraph(subParts)
     #println(subParts)
-	allnodes = sort(unique(collect(flatten(map(x->split(x,'-'),subParts)))))
+	allnodes = sort(unique(collect(Base.Iterators.flatten(map(x->split(x,'-'),subParts)))))
     #println(allnodes)
     nodesNum = length(allnodes)
     #println(nodesNum)
@@ -83,12 +83,12 @@ directedRegex = r"<|>"
 Splits subParts in directed 
 """
 function getDiNodeNames(subParts)
-	nodeNames = unique(collect(flatten(map(x->split(x,directedRegex),subParts))))
+	nodeNames = unique(collect(Base.Iterators.flatten(map(x->split(x,directedRegex),subParts))))
 	return nodeNames
 end
 
 function getUndiNodeNames(subParts)
-	nodeNames = unique(collect(flatten(map(x->split(x,'-'),subParts))))
+	nodeNames = unique(collect(Base.Iterators.flatten(map(x->split(x,'-'),subParts))))
 	return nodeNames
 end
 

@@ -1,6 +1,7 @@
 using LightGraphs
 using UAI
 import Base.show
+import Base.write
 
 const Var = Symbol
 # Query is a representation of a probability query e.g.
@@ -55,18 +56,56 @@ Base.show(io::IO, q::Query) = if hasConditioningSet(q)
 	end
 
 mutable struct JPD
+	graphNW :: String
 	factorization::Factorization
 	variables::Array{Var}
 	domains::Dict{Symbol,Union{Vector,Nothing}}
 	#= domains::Dict{Symbol,Array{Any,1}}  =#
 	probTables::Dict{F,S} where {F<:AbstractFactor, T<:Real, S<:Array{T,N} where N}
 	function JPD(str::String) 
+		graphNW = str
 		fact, vars = getFactorization(str)
 		domains = Dict(map(x->(Var(x),nothing), vars)) 
 		#domains = Dict(map(x->(Var(x),convert(Vector,[])), vars)) 
 		tables = Dict{AbstractFactor,Array{Float64}}()
-		new(fact, vars, domains, tables)
+		new(graphNW, fact, vars, domains, tables)
 	end
+end
+
+
+function writtenDomain(d::Pair)
+	domName, domVals = d
+	type = eltype(domVals)
+	typedVals = type <: Number ? domVals : map(x->"$type(\"$x\")",domVals)
+	valsStr = string("[",join(typedVals,","),"]")
+	return "setTable!(j, :$domName, $valsStr )\n"
+end
+
+function writtenDomains(jpd::JPD)
+	doms = collect(j.domains)
+	result = string("#Setting domains:\n",join(map(x->writtenDomain(x),doms)))
+	return result 
+end
+
+function writtenGraphNW(jpd::JPD)
+	gn = jpd.graphNW
+	return "j = JPD(\"$gn\")\n"
+end
+
+function writtenTable(factTable::Pair)
+	factor, table = factTable
+	serialize("$factor.sjl",factTable)
+	deserializeStr = "tmp = deserialize(\"$factor.sjl\")\n"
+	return join(deserializeStr,"setTable!(j, tmp[1], tmp[2])\n")
+end
+
+function writtenTables(jpd::JPD)
+
+end
+
+function write(io, jpd::JPD) 
+	resultstring = string(writtenGraphNW, writtenDomains(jpd))
+	write(io, resultstring)
 end
 
 function setAllDomains!(jpd::JPD,domain)
@@ -126,6 +165,7 @@ function setTable!(jpd::JPD,query::Var,table)
 	table = table isa NamedArray ? convert(Array,table) : table
 	f = getFactor(jpd,query,Var[])
 	domain = jpd.domains[query]
+	# TODO: check for existing domains?
 	if length(domain) !== length(table)
 		throws(error("table length must match domain $domain"))
 	end

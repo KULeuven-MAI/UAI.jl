@@ -156,6 +156,8 @@ function getNewIdx(g::DiGraph,toDelete::Array{T,1}) where T<:Integer
 	return i -> findfirst(x->x==i, deleteat!(collect(vertices(g)),toDelete))
 end
 
+#TODO: check for existance of plots directory.
+#TODO: make plotting optional with a kw argument. 
 function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 										condSet::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
