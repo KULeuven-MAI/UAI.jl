@@ -79,13 +79,6 @@ function firstBucket(remainingVars,orderedVars)
     return foundmin,orderedVars[foundmin]
 end
  
-function printSorted(buckets)
-    for b in sort(collect(buckets), by=x->x[1][1]) 
-        println(b[1][2],Factorization(b[2]))
-    end
-end
- 
- 
 function eliminate(orderedVars,buckets)
     for (i,currentVar) in enumerate(orderedVars)
         println(buckets[(i,currentVar)])
