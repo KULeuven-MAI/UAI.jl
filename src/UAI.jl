@@ -40,6 +40,8 @@ module UAI
 	include("bucketElimination.jl")
 	export bucketInitialise, eliminate, MessageFactor
 
+	include("factorGraphs.jl")
+	export getFactorGraph, plotFG 
 
 # Use DataFrames for datasets?
 
