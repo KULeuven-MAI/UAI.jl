@@ -16,7 +16,6 @@ You can make a graph by using the following notation, a combination of `julia '-
 #
 
 ```@docs
-getAllAncestors
 isPerfectMap
 selectdim
 parseGraph
@@ -25,7 +24,7 @@ disorient
 getBayesianFactor
 convert
 convert
-getAllDescendants
+getAllAncestors
 getAllDescendants
 marryAll!
 disorient!
@@ -34,4 +33,11 @@ getNamedTable
 moralize!
 marryAll
 getChainComponents
+drawFromStr
+getFactorGraph
+plotFG
+@isDep
+@isIdp
+isDMap
+isIMap
 ```

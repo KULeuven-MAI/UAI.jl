@@ -7,6 +7,10 @@ using Cairo
 using UAI
 using LightGraphs
 
+
+#TODO: Refactor assignment specific functions into seperate file in misc/
+#TODO: add optional backend? 
+
 # Visualisation code
 function getColor(nodeName)
     if startswith(nodeName,"f")
@@ -229,7 +233,17 @@ function drawGraph(whichOne,filename)
     end
 end
 
-function drawFromStr(str, filename)
+"""
+	drawFromStr(str::String, filename::String)
+
+Function that draws the given string as a graph.
+```julia
+	drawFromStr("a-b-c; c-b", "undirected.png")
+	drawFromStr("a>b<c; c<b", "directed.png")
+	drawFromStr("a>b<c; c<b-e-d-f>c", "chainGraph.png")
+```
+"""
+function drawFromStr(str::String, filename::String)
     (sg,nodes) = parseGraph(str)
     #println(str)
     #println(nodes)

@@ -14,7 +14,12 @@ function getOrphans(g)
 end
 
 # TODO: refactor into smaller functions
-function getFactorGraph(str::String)
+"""
+	getFactorGraph(str::String)::MetaGraph
+
+Reads a graph-string and returns a factor-graph.
+"""
+function getFactorGraph(str::String)::MetaGraph
 	sg, nodes = parseGraph(str)
 	orphans = getOrphans(sg)
 	fg = MetaGraph(sg)
@@ -60,7 +65,13 @@ function getFactorDiGraph(str::String)
 	@assert false
 end
 
-function plotFG(g)
+"""
+	plotFG(g::MetaGraph)
+
+Plots the given MetaGraph as a Factor Graph. 
+"""
+function plotFG(g::MetaGraph)
+	#TODO: refactor to visualizer?
 	graphplot(g, curves = false, 
 		   names = [get_prop(g, v, :name) for v in vertices(g)],
 		   nodeshape = [get_prop(g, v, :nodeshape) for v in vertices(g)],

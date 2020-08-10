@@ -1,6 +1,5 @@
 using UAI
 
-
 function parseQuery(sym::Symbol)
 	return ([sym],[])
 end
@@ -69,6 +68,10 @@ macro gidp(graphString, firstVar, queryExpr)
 	end
 end
 
+"""
+	isDep(firstVar, queryExpr)
+
+"""
 macro isDep(firstVar, queryExpr)
 	local (query,condSet) = parseQuery(queryExpr)
 	local fV = QuoteNode(firstVar)
@@ -85,6 +88,10 @@ macro isDep(firstVar, queryExpr)
 	end
 end
 
+"""
+	isIdp(firstVar, queryExpr)
+
+"""
 macro isIdp(firstVar, queryExpr)
 	local (query,condSet) = parseQuery(queryExpr)
 	local fV = QuoteNode(firstVar)
