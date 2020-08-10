@@ -38,6 +38,8 @@ end
 
 
 """
+	getAllAncestors(g::DiGraph, node::Integer)
+
 Returns all ancestors of a node in a non-cyclic graph.
 """
 function getAllAncestors(g::DiGraph, node::Integer)
@@ -303,6 +305,11 @@ function isDMap(graphString, idpList)
 	return all(map(x->x in Lg,idpList))
 end
 
-function isPerfectMap(graphString, idpList)
+"""
+	isPerfectMap(graphString::String, idpList)
+	
+Tests whether a given list of independence statements is a perfect map for the given graph string. 
+"""
+function isPerfectMap(graphString::String, idpList)
 	return isIMap(graphString,idpList) && isDMap(graphString,idpList)
 end

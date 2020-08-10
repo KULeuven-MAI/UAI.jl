@@ -4,7 +4,7 @@ using Random
 # Quick test from example of Lecture 5
 # TODO write actual tests of exercises.
 j = JPD("c<a>d;f<d<b;d>g<e")
-bucks = eliminate(bucketInitialise(j,"ecbgadf")...)
+bucks = bucketEliminate(j,makeOrder("e,c,b,g,a,d,f"))
 
 @test bucks[(1,:e)] == []
 @test bucks[(2,:c)] == []

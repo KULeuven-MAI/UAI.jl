@@ -13,8 +13,6 @@ function hasConditioningSet(query)
 	return length(query[2]) > 0 
 end
 
-
-
 abstract type AbstractFactor end
 abstract type BayesianFactor <: AbstractFactor end
 abstract type MarkovFactor <: AbstractFactor end

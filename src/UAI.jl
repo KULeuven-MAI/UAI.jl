@@ -38,7 +38,7 @@ module UAI
 	export setTableInteractive!,setAllInteractive!
 
 	include("bucketElimination.jl")
-	export bucketInitialise, eliminate, MessageFactor
+	export bucketEliminate, bucketInitialise, eliminate, MessageFactor, makeOrder, firstBucket 
 
 	include("factorGraphs.jl")
 	export getFactorGraph, plotFG 
