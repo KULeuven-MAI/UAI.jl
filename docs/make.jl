@@ -1,10 +1,12 @@
 using Documenter
 using UAI
 
+DocMeta.setdocmeta!(UAI, :DocTestSetup, :(using UAI); recursive=true)
 makedocs(
     sitename = "UAI",
     format = Documenter.HTML(),
-    modules = [UAI]
+    modules = [UAI],
+		doctest = true
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.

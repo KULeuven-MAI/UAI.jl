@@ -40,4 +40,10 @@ plotFG
 @isIdp
 isDMap
 isIMap
+bucketEliminate
+bucketInitialise
+eliminate
+MessageFactor
+makeOrder
+firstBucket 
 ```
