@@ -106,23 +106,30 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 ## In progress Features
 
 - Displaying chain graphs is possible with my [GraphPlot fork](https://github.com/dietercastel/Graphplot.jl) ([until this PR](https://github.com/JuliaGraphs/GraphPlot.jl/pull/110))
-- Displaying matrices & vectors beautifully (useful for visualizing algorithms) 
+- Cleaner APIs and better documentation.
+- Inference with bucket elimination. 
 
 ## Wanted Features
 
+- Inference with various algorithms: naive sum-prodcut, bucket elimination, sum-product algorithm on factor graphs, alpha/beta inference for HMMs
+- Benchmark comparison of the implemented inference algorithms.
+- (Full Information) Maximum Likelihood implementation for Missing At Random data.
 - Tools for step-by-step probabilistic reasoning: application of definitions, Bayes rule, pushing sums down, ...
 - Soft logic gates tool
+- Implement Plots.jl and GraphRecipes as visual backend instead of GraphPlot.jl.
 - (Interactive?) Visualization of the simplified sum-product algorithm for non-branching graphs
 - (Interactive?) Visualization of the (Sum|Max)-Product algorithm
 - Interactive and visualized probabilistic problem solving challenges.
 - SVG support for drawFromStr() (see [#1](https://github.com/KULeuven-MAI/UAI.jl/issues/1))
-- Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
-- Accessibility (for ease of education with dyslexia, colorblindness, dyspraxia, ...)
+- Make documentation cheatsheet corresponding to [this one here](https://github.com/KULeuven-MAI/UAI/raw/master/cheatsheet.pdf)
 - **\< Your suggestion here \>**
 
 ## Nice to have features
 
+- Multi-node support like `A,B>C` (see [#2](https://github.com/KULeuven-MAI/UAI.jl/issues/2))
 - Plate notation
 - Integration of [this paper](https://arxiv.org/pdf/1911.00892.pdf) and other math-visual tools
 - Integration with [Probabilistic Programming Language Turing.jl](https://turing.ml/dev/docs/using-turing/get-started)?
+- Accessibility (for ease of education with dyslexia, colorblindness, dyspraxia, ...)
+- Displaying matrices & vectors beautifully (useful for visualizing algorithms) 
 - **\< Your suggestion here \>**
