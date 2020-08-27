@@ -238,9 +238,9 @@ end
 
 Function that draws the given string as a graph.
 ```julia
-	drawFromStr("a-b-c; c-b", "undirected.png")
-	drawFromStr("a>b<c; c<b", "directed.png")
-	drawFromStr("a>b<c; c<b-e-d-f>c", "chainGraph.png")
+drawFromStr("a-b-c; c-b", "undirected.png")
+drawFromStr("a>b<c; c<b", "directed.png")
+drawFromStr("a>b<c; c<b-e-d-f>c", "chainGraph.png")
 ```
 """
 function drawFromStr(str::String, filename::String)
@@ -253,6 +253,7 @@ function drawFromStr(str::String, filename::String)
 	end
 	#println("test2")
     plot2File(sg, nodes, filename)
+	println("Written to $filename")
 end
 
 function plot2FileCG(graph, nodeNames, filename)

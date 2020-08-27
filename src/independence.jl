@@ -302,10 +302,13 @@ end
 
 Returns true when the given graphical model represented as a string is an Independence-map
 for the given list of independence statements.
-```julia
-	lp = [(@isIdp c d|a) (@isIdp c b|a)]
-	graphstring = "c-a-b-d-a"
-	isImap(graphstring,lp)
+```jldoctest
+lp = [(@isIdp a b|c)]
+graphstring = "a>c<b"
+isIMap(graphstring,lp)
+
+# output
+false
 ```
 """
 function isIMap(graphString::String, idpList)
@@ -318,10 +321,13 @@ end
 
 Returns true when the given graphical model represented as a string is an Dependence-map
 for the given list of independence statements.
-```julia
-	lp = [(@isIdp c d|a) (@isIdp c b|a)]
-	graphstring = "c-a-b-d-a"
-	isDmap(graphstring,lp)
+```jldoctest
+lp = [(@isIdp c d|a) (@isIdp c b|a)]
+graphstring = "c-a-b-d-a"
+isDMap(graphstring,lp)
+# output
+
+true
 ```
 """
 function isDMap(graphString::String, idpList)
@@ -333,10 +339,14 @@ end
 	isPerfectMap(graphString::String, idpList)
 	
 Tests whether a given list of independence statements is a perfect map for the given graph string. 
-```julia
-	lp = [(@isIdp c d|a) (@isIdp c b|a)]
-	graphstring = "c-a-b-d-a"
-	isPerfectMap(graphstring,lp)
+```jldoctest
+lp = [(@isIdp c d|a) (@isIdp c b|a)]
+graphstring = "c-a-b-d-a"
+isPerfectMap(graphstring,lp)
+
+# output
+
+true
 ```
 """
 function isPerfectMap(graphString::String, idpList)
