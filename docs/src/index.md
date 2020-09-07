@@ -15,35 +15,6 @@ You can make a graph by using the following notation, a combination of `julia '-
 
 #
 
-```@docs
-isPerfectMap
-selectdim
-parseGraph
-moralize
-disorient
-getBayesianFactor
-convert
-convert
-getAllAncestors
-getAllDescendants
-marryAll!
-disorient!
-getDiNodeNames
-getNamedTable
-moralize!
-marryAll
-getChainComponents
-drawFromStr
-getFactorGraph
-plotFG
-@isDep
-@isIdp
-isDMap
-isIMap
-bucketEliminate
-bucketInitialise
-eliminate
-MessageFactor
-makeOrder
-firstBucket 
+```@autodocs
+Modules = [UAI]
 ```
