@@ -163,7 +163,12 @@ end
 function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 										condSet::Array{T,1}=Int[],
 										nodeNames = collect(1:nv(g))) where T <: Integer
-	plot2FileCG(g,nodeNames,joinpath("plots","original.png"))
+	if firstVertex == secondVertex
+		return false
+	end
+	plotdir = "plots"
+	isdir(plotdir) ? nothing : mkdir(plotdir) 
+	plot2FileCG(g,nodeNames,joinpath(plotdir,"original.png"))
 	# make a copy
 	newG = deepcopy(g) 
 	startNodes = vcat([firstVertex, secondVertex],condSet...)
@@ -188,15 +193,15 @@ function isGraphIdp(g::DiGraph, firstVertex::Int, secondVertex::Int;
 		end
 	end
 
-	plot2FileCG(newG,remainingNodes,joinpath("plots","relevant.png"))
+	plot2FileCG(newG,remainingNodes,joinpath(plotdir,"relevant.png"))
 
 	# 2) Moralize 
 	moralize!(newG)
 
-	plot2FileCG(newG,remainingNodes,joinpath("plots","moralized.png"))
+	plot2FileCG(newG,remainingNodes,joinpath(plotdir,"moralized.png"))
 	# 3) Disorient
 	disorient!(newG)
-	plot2FileCG(newG,remainingNodes,joinpath("plots","disoriented.png"))
+	plot2FileCG(newG,remainingNodes,joinpath(plotdir,"disoriented.png"))
 
 	# 4) remove the elements in the condition set 
 	# 5) first & second are graph-idp if NOT connected
@@ -212,7 +217,7 @@ function isGraphIdp(graphToParse::String, firstName::String, secondName::String;
 	firstVertex = getNodeId(firstName,n)
 	secondVertex = getNodeId(secondName,n)
 	idcondSet = isempty(condSet) ? Int[] : map(x->getNodeId(x,n),condSet)
-	println(condSet)
+	#println(condSet)
 	#= println(g) =#
 	#= println(firstVertex) =#
 	#= println(secondVertex) =#

@@ -96,7 +96,6 @@ macro isIdp(firstVar, queryExpr)
 	local (query,condSet) = parseQuery(queryExpr)
 	local fV = QuoteNode(firstVar)
 	local qN = QuoteNode(query[1]) 
-	println(condSet)
 	if condSet != []
 		local eN = QuoteNode(condSet[1])
 		return quote
