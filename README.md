@@ -1,6 +1,6 @@
 # UAI.jl
 
-![](docs/src/assets/logo.png)
+![](logo/logo.png)
 
 This is a Julia library accompanying the KUL course [Uncertainty in Artificial Intelligence](https://onderwijsaanbod.kuleuven.be/syllabi/e/H02D2AE.htm#activetab=doelstellingen_idp38400).
 
