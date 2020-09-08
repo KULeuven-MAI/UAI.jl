@@ -138,7 +138,7 @@ end
 
 # Function parses the given string as a graph depending on the type of string
 # Returns a tuple of type (Graph,[NodeNameStr])
-# TODO: add a strict ordering (e.g. alphabetically)
+# TODO: refactor into extension of import Base.parse
 """
 Function parses the given string as a graph depending on the type of string
 Returns a tuple of type (Graph,[NodeNameStr])

@@ -107,3 +107,10 @@ macro isIdp(firstVar, queryExpr)
 		end
 	end
 end
+
+"""
+Generates a named graph from a string by using parseGraph.
+"""
+macro g_str(str)
+	parseGraph(str)
+end
