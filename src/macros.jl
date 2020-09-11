@@ -96,7 +96,6 @@ macro isIdp(firstVar, queryExpr)
 	local (query,condSet) = parseQuery(queryExpr)
 	local fV = QuoteNode(firstVar)
 	local qN = QuoteNode(query[1]) 
-	println(condSet)
 	if condSet != []
 		local eN = QuoteNode(condSet[1])
 		return quote
@@ -107,4 +106,11 @@ macro isIdp(firstVar, queryExpr)
 			formatIdpStatement((string($fV),string($qN)))
 		end
 	end
+end
+
+"""
+Generates a named graph from a string by using parseGraph.
+"""
+macro g_str(str)
+	parseGraph(str)
 end
