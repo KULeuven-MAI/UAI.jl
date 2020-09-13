@@ -6,6 +6,8 @@ using UnicodeFun
 using Cairo
 using UAI
 using LightGraphs
+using Plots
+using GraphRecipes
 
 
 #TODO: Refactor assignment specific functions into seperate file in misc/
@@ -254,6 +256,44 @@ function drawFromStr(str::String, filename::String)
 	#println("test2")
     plot2File(sg, nodes, filename)
 	println("Written to $filename")
+end
+
+"""
+	plotFromStr(str, filename::String)
+
+Function that draws the given string as a graph using Plots and GraphRecipes.
+Chain Graphs not yet supported.
+```julia
+plotFromStr("a-b-c; c-b", "undirected.png")
+plotFromStr("a>b<c; c<b", "directed.png")
+```
+"""
+function plotFromStr(str, filename::String)
+	colors = [colorant"#FCE94F",colorant"#389826",colorant"#455ED3",colorant"#CB3C33"]
+	(sg,nodes) = parseGraph(str)
+	l = length(nodes)
+	nodecols = repeat(colors,l÷length(colors)+1)[1:l]
+	p = graphplot(sg,
+		  names = nodes, 
+		  # edgelabel = Dict TODO
+		  nodeshape=:circle, 
+		  nodesize=0.2,
+		  nodestrokewidth=1.4,
+		  axis_buffer=0.6,
+		  #curves=false,
+		  #curvature_scalar=0, # bug curvature scalar
+		  color=:white,
+		  arrow=:simple,
+		  #arrow=:head,
+		  #nodecolor=[colorant"#9558B2",colorant"#389826",colorant"#455ED3",colorant"#CB3C33"],
+		  nodecolor= nodecols,
+		  linewidth=0.6,
+		  #edgecolor = :green,
+		  #edgecolor=(s,d,w)->RGB(0.4,1.0,0.8),
+		  edgecolor=(s,d,w)->colorant"#66FFCC",
+		  edgewidth=(s,d,w)->3,
+		  background_color=colorant"#181818")
+	savefig(p,filename)
 end
 
 function plot2FileCG(graph, nodeNames, filename)

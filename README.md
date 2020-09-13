@@ -49,7 +49,7 @@ instantiate
 <backspace>
 using UAI 
 # precompiled and all set for e.g. this:
-drawFromStr("a>c<b", "plots/collider.png")
+plotFromStr("a>c<b", "plots/collider.png")
 ```
 
 ### Using Julia REPL/jupyter notebook
@@ -86,19 +86,19 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 
 ### Bayesian Network - Collider
 
-`drawFromStr("a>c<b", "plots/collider.png")`
+`plotFromStr("a>c<b", "plots/collider.png")`
 ![](plots/collider.png)
 
 ### Bayesian Network - Fork
-`drawFromStr("a<f>b", "plots/fork.png")`
+`plotFromStr("a<f>b", "plots/fork.png")`
 ![](plots/fork.png)
 
 ### Bayesian Network - Chain
-`drawFromStr("a>b>c", "plots/chain.png")`
+`plotFromStr("a>b>c", "plots/chain.png")`
 ![](plots/chain.png)
 
 ### Markov Network - A grid with a loop 
-`drawFromStr("a-b-c-d-a", "plots/grid.png")`
+`plotFromStr("a-b-c-d-a", "plots/grid.png")`
 ![](plots/grid.png)
 
 ### Markov Network - A grid with a loop 

@@ -20,7 +20,7 @@ module UAI
 	export parseGraph, parseUndiGraph, parseDiGraph, parseFactorization
 
 	include("visualizer.jl")
-	export drawGraph, drawFromStr, saveToFile
+	export drawGraph, drawFromStr, saveToFile, plotFromStr
 
 	include("types.jl")
 	export DiscreteVar, getDomain, hasDomain, setDomain
