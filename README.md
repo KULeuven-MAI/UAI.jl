@@ -101,7 +101,7 @@ If you create a PR, please make sure the test are succeeding, fix them if necess
 `plotFromStr("a-b-c-d-a", "plots/grid.png")`
 ![](plots/grid.png)
 
-### Markov Network - A grid with a loop 
+### Chain Graph - combining directed and undirected graphs. 
 `drawFromStr("e<a-b-c-d>e;d-a", "plots/chainGraph.png")`
 ![](plots/chainGraph.png)
 

@@ -93,7 +93,7 @@ function message(var::Var, factors::Array{AbstractFactor})::MessageFactor
 	remainingVars = mapreduce(x->filter(y->y != var,x),append!,allvars)
 	remainingStr = join(remainingVars,",")
 	factoriz = Factorization(factors)
-	str = "γ_$var($remainingStr)=∑_$var$factoriz"
+	str = "γ_$var($remainingStr)=∑_$var $factoriz"
 	println(str)
 	return MessageFactor(var,remainingVars,factoriz)
 end 
@@ -139,5 +139,5 @@ Runs the bucket elimination on the given Joint Probability Distribution with the
 The final variable determines the marginal probability distribution to be computed.
 """
 function bucketEliminate(j::JPD,order::Array{Var})
-		eliminate(bucketInitialise(j,order))
+		eliminate(order, bucketInitialise(j,order))
 end
